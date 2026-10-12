@@ -11,7 +11,7 @@ Một ngày bán hàng (12/10/2026) của shop hoa giả lập **Công ty TNHH H
 | `1-anh-chuyen-khoan-zalo/` | 17 ảnh JPG/PNG, tên tệp kiểu Zalo | 5 kiểu màn hình: app ngân hàng kiểu cũ, app ngân hàng mới, ví điện tử, biên lai, internet banking trên máy tính |
 | `2-hoa-don-dien-tu/` | 7 PDF + 1 ảnh chụp | Hóa đơn GTGT điện tử có mã CQT, ký hiệu `1C26THM`, thuế suất 8% |
 | `3-xuat-tu-phan-mem/phan-mem-ban-hang-12-10-2026.xlsx` | Trang `Đơn hàng` (16 đơn) và `Hóa đơn điện tử` (bảng kê 7 hóa đơn) | File xuất từ phần mềm bán hàng, tên cột kiểu `Mã ĐH`, `SĐT`, `Khách cần trả` |
-| `4-ket-qua-dung-san/` | 3 file Excel kết quả | Dùng khi máy học viên lỗi, để vẫn làm được phần nghiệm thu |
+| `4-ket-qua-dung-san/` | 3 file Excel kết quả và dashboard HTML | Dùng khi máy học viên lỗi, để vẫn làm được phần nghiệm thu |
 | `DAP_AN.md` | Kết quả đúng cho từng đơn, ảnh, hóa đơn | Dùng để nghiệm thu |
 
 ## Các tình huống khó được cài sẵn
@@ -24,17 +24,25 @@ Một ngày bán hàng (12/10/2026) của shop hoa giả lập **Công ty TNHH H
 
 Từ thư mục gốc repo, sau khi cài theo [INSTALL.md](../hoa-don-agent/INSTALL.md) (đặt `PY=hoa-don-agent/spreadsheet_agents/.venv/bin/python`, `A=hoa-don-agent/spreadsheet_agents/agent.py`):
 
-```bash
-$PY $A doi-soat-thanh-toan bo_du_lieu_mau_doi_soat/1-anh-chuyen-khoan-zalo bo_du_lieu_mau_doi_soat/3-xuat-tu-phan-mem/phan-mem-ban-hang-12-10-2026.xlsx --dau-ra output/doi-soat-chuyen-khoan.xlsx
-```
+1. Đọc hóa đơn điện tử:
 
 ```bash
 $PY $A hoa-don bo_du_lieu_mau_doi_soat/2-hoa-don-dien-tu --dau-ra output/hoa-don-doc-duoc.xlsx
 ```
 
+2. Đối chiếu hóa đơn với bảng kê trong phần mềm:
+
 ```bash
 $PY $A doi-chieu output/hoa-don-doc-duoc.xlsx bo_du_lieu_mau_doi_soat/3-xuat-tu-phan-mem/phan-mem-ban-hang-12-10-2026.xlsx --trang-trai "Hóa đơn" --trang-phai "Hóa đơn điện tử" --khoa "Số hóa đơn" --cot "Ngày hóa đơn,MST người mua,Tổng tiền" --dau-ra output/doi-chieu-hoa-don.xlsx
 ```
+
+3. Đối soát ảnh chuyển khoản, đưa kết quả hóa đơn vào dashboard:
+
+```bash
+$PY $A doi-soat-thanh-toan bo_du_lieu_mau_doi_soat/1-anh-chuyen-khoan-zalo bo_du_lieu_mau_doi_soat/3-xuat-tu-phan-mem/phan-mem-ban-hang-12-10-2026.xlsx --doi-chieu-hoa-don output/doi-chieu-hoa-don.xlsx --dau-ra output/doi-soat-chuyen-khoan.xlsx
+```
+
+Bước 3 tạo thêm `output/doi-soat-chuyen-khoan.html`: dashboard mở bằng trình duyệt, xem theo vai trò Chủ shop / Quản lý / Kế toán. Mở file này để xem kết quả.
 
 Hoặc trong Claude Code: `/hoa-don-agent đối soát bộ mẫu bo_du_lieu_mau_doi_soat`.
 
