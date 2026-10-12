@@ -697,6 +697,10 @@ def extract_payment_proof(path: Path) -> dict:
     transferred_at = labelled_value(text, ("Thời gian", "Ngày giao dịch", "Transaction time", "Ngày"))
     if transferred_at and not re.search(r"\d{1,2}[/:]\d{2}", transferred_at):
         transferred_at = None
+    if not transferred_at:
+        # Table layouts put the label and the value on different OCR lines; look for any date-time in the text.
+        stamp = re.search(r"\d{1,2}/\d{1,2}/\d{4}\s+\d{1,2}:\d{2}(?::\d{2})?|\d{1,2}:\d{2}(?::\d{2})?\s*-?\s*\d{1,2}/\d{1,2}/\d{4}", text)
+        transferred_at = stamp.group(0) if stamp else None
     return {
         "source_file": path.name,
         "source_path": str(path),
@@ -715,6 +719,7 @@ PAYMENT_COLUMNS = {
     "customer": ("khach hang", "ten khach", "ten khach hang", "ho ten", "ho va ten", "ten", "customer"),
     "amount_due": ("phai thu", "can thu", "khach can tra", "khach phai tra", "so tien", "so tien phai thu", "thanh tien", "tong tien", "tong", "gia tri don", "amount", "total"),
     "phone": ("so dien thoai", "dien thoai", "sdt", "so dt", "phone"),
+    "channel": ("kenh ban", "kenh ban hang", "kenh", "nguon don", "channel"),
 }
 LARGE_ORDER = 2_000_000  # from this amount, check the bank statement before delivery
 STATUS_ORDER = ("Đã trả đủ", "Trả thiếu", "Chưa trả", "Cần kiểm tra")
@@ -749,6 +754,7 @@ def payment_columns(headers: list[str], args) -> dict[str, str]:
         "customer": args.customer_column,
         "amount_due": args.amount_column,
         "phone": args.phone_column,
+        "channel": None,
     }
     normalized = {normalize_match(header): header for header in headers if header}
     found = {}
@@ -836,8 +842,8 @@ def reminder_message(order: dict, status: str, received: float, missing: float) 
         return (f"Chào {name}, shop đã nhận {money(received)} cho đơn {code}. "
                 f"Đơn còn thiếu {money(missing)}, anh/chị kiểm tra giúp shop nhé. Cảm ơn anh/chị!")
     if status == "Chưa trả":
-        return (f"Chào {name}, đơn {code} ({money(order['amount_due'])}) shop chưa thấy thanh toán. "
-                "Nếu anh/chị đã chuyển, gửi giúp shop ảnh chuyển khoản nhé. Cảm ơn anh/chị!")
+        return (f"Chào {name}, với đơn {code} ({money(order['amount_due'])}), shop chưa ghép được ảnh thanh toán "
+                "trong dữ liệu cuối ngày. Nếu anh/chị đã chuyển, gửi giúp shop ảnh chuyển khoản nhé. Cảm ơn anh/chị!")
     return ""
 
 
@@ -850,14 +856,14 @@ def order_status(order: dict) -> tuple[str, str]:
     if hints and received < due - 1:
         return "Cần kiểm tra", f"Mở ảnh {hints} để xác nhận"
     if not order["payments"]:
-        return "Chưa trả", "Nhắc khách thanh toán"
+        return "Chưa trả", "Chưa tìm thấy ảnh ghép chắc; kiểm tra Zalo/sao kê trước khi nhắc khách"
     if received > due + 1:
         return "Cần kiểm tra", f"Nhận dư {money(received - due)}; xác minh hoàn tiền hoặc trừ đơn sau"
     if received < due - 1:
         return "Trả thiếu", f"Nhắc khách chuyển thêm {money(due - received)}"
     if due >= LARGE_ORDER:
-        return "Đã trả đủ", "Đủ theo ảnh; đơn lớn, xem sao kê trước khi giao"
-    return "Đã trả đủ", "Xác nhận đơn"
+        return "Đã trả đủ", "Đủ theo ảnh; xem sao kê trước khi xác nhận đơn hoặc giao hàng"
+    return "Đã trả đủ", "Đủ theo ảnh; kiểm tra sao kê theo quy trình trước khi xác nhận đơn"
 
 
 def unique_output(path: Path) -> Path:
@@ -872,6 +878,8 @@ def unique_output(path: Path) -> Path:
 
 def reconcile_payments(args) -> Path:
     load_workbook, Workbook, Font, PatternFill, get_column_letter = workbook_libs()
+    from openpyxl.styles import Alignment
+    import bao_cao
     order_file = Path(args.orders).expanduser()
     wb_orders = load_workbook(order_file, data_only=True)
     if args.sheet and args.sheet not in wb_orders.sheetnames:
@@ -890,6 +898,7 @@ def reconcile_payments(args) -> Path:
             "order_code": values.get("order_code"),
             "customer": values.get("customer"),
             "phone": values.get("phone"),
+            "channel": values.get("channel"),
             "amount_due": parse_money(values.get("amount_due")),
             "payments": [],
             "hints": [],
@@ -905,7 +914,7 @@ def reconcile_payments(args) -> Path:
         try:
             proof = extract_payment_proof(path)
         except Exception as exc:
-            proofs.append({"source_file": path.name, "result": f"Không đọc được ảnh: {exc}", "fill": RED})
+            proofs.append({"source_file": path.name, "result": f"Không đọc được ảnh: {exc}", "fill": RED, "kind": "Không đọc được"})
             continue
         transaction_key = normalize_match(proof.get("transaction_id"))
         duplicate_of = seen_hashes.get(proof["file_hash"]) or (seen_transactions.get(transaction_key) if transaction_key else None)
@@ -915,7 +924,7 @@ def reconcile_payments(args) -> Path:
         order, score, evidence, candidates = payment_match(proof, orders)
         proof.update({"match_score": score, "match_evidence": evidence})
         if duplicate_of:
-            proof.update(result=f"Trùng với ảnh {duplicate_of}; không cộng tiền", fill=RED)
+            proof.update(result=f"Trùng với ảnh {duplicate_of}; không cộng tiền", fill=RED, kind="Trùng")
         elif proof.get("amount") is None:
             target = [order] if order else candidates
             for item in target:
@@ -923,21 +932,22 @@ def reconcile_payments(args) -> Path:
                                      else f"{path.name} ({evidence.lower()})")
             proof.update(matched_order=", ".join(str(o.get("order_code")) for o in target) or None,
                          result="Không đọc được số tiền; mở ảnh kiểm tra" if proof.get("transaction_id") or target
-                         else "Không đọc được số tiền; có thể không phải biên nhận", fill=RED)
+                         else "Không đọc được số tiền; có thể không phải biên nhận", fill=RED, kind="Không đọc được")
         elif order:
             order["payments"].append(proof)
-            proof.update(matched_order=order.get("order_code"), result="Đã ghép", fill=GREEN)
+            proof.update(matched_order=order.get("order_code"), result="Đã ghép", fill=GREEN, kind="Đã ghép")
         elif shared := shared_transfer(proof, candidates):
             evidence = f"1 lần chuyển cho {len(shared)} đơn: có mã các đơn, tổng tiền khớp"
             for item in shared:
                 item["payments"].append({"source_file": path.name, "amount": item["amount_due"], "match_evidence": evidence})
             proof.update(matched_order=", ".join(str(o.get("order_code")) for o in shared), match_evidence=evidence,
-                         result=f"Đã ghép, chia cho {len(shared)} đơn", fill=GREEN)
+                         result=f"Đã ghép, chia cho {len(shared)} đơn", fill=GREEN, kind="Đã ghép")
         else:
             for item in candidates:
                 item["hints"].append(f"{path.name} ({evidence.lower()})")
             proof.update(matched_order=", ".join(str(o.get("order_code")) for o in candidates) or None,
-                         result=("Gợi ý, cần người xác nhận" if candidates else "Chưa ghép được; xem ảnh và tìm đơn"), fill=YELLOW)
+                         result=("Gợi ý, cần người xác nhận" if candidates else "Chưa ghép được; xem ảnh và tìm đơn"), fill=YELLOW,
+                         kind="Gợi ý" if candidates else "Chưa ghép")
         proofs.append(proof)
 
     out = unique_output(Path(args.output).expanduser())
@@ -950,19 +960,21 @@ def reconcile_payments(args) -> Path:
     ws = wb.create_sheet("Đơn hàng")
     ws.append(["Mã đơn", "Khách hàng", "Số điện thoại", "Phải thu", "Đã nhận theo ảnh", "Còn thiếu", "Trạng thái",
                "Ảnh đã ghép", "Căn cứ ghép", "Việc cần làm", "Tin nhắn nhắc (soạn sẵn, chưa gửi)"])
-    groups = defaultdict(list)
+    rows = []
     for order in orders:
         status, action = order_status(order)
         received = sum(proof["amount"] for proof in order["payments"])
         due = order.get("amount_due")
         missing = max(due - received, 0) if due is not None else None
-        groups[status].append((order, received, missing))
-        ws.append([
-            order.get("order_code"), order.get("customer"), order.get("phone"), due, received, missing, status,
-            ", ".join(proof["source_file"] for proof in order["payments"]),
-            "; ".join(dict.fromkeys(proof["match_evidence"] for proof in order["payments"])),
-            action, reminder_message(order, status, received, missing or 0),
-        ])
+        rows.append({
+            "code": order.get("order_code"), "customer": order.get("customer"), "phone": order.get("phone"),
+            "channel": order.get("channel"), "due": due, "received": received, "missing": missing,
+            "status": status, "action": action, "message": reminder_message(order, status, received, missing or 0),
+            "images": ", ".join(proof["source_file"] for proof in order["payments"]),
+            "evidence": "; ".join(dict.fromkeys(proof["match_evidence"] for proof in order["payments"])),
+        })
+        ws.append([rows[-1][k] for k in ("code", "customer", "phone", "due", "received", "missing",
+                                          "status", "images", "evidence", "action", "message")])
         for cell in ws[ws.max_row]:
             cell.fill = PatternFill("solid", fgColor=STATUS_FILL[status])
 
@@ -978,38 +990,20 @@ def reconcile_payments(args) -> Path:
         for cell in detail[detail.max_row]:
             cell.fill = PatternFill("solid", fgColor=proof["fill"])
 
-    total_due = sum(order["amount_due"] or 0 for order in orders)
-    total_received = sum(proof["amount"] for order in orders for proof in order["payments"])
-    summary.append([f"Đối soát chuyển khoản · {date.today():%d/%m/%Y}"])
-    summary.append([f"{len(orders)} đơn · {len(proofs)} ảnh · phải thu {money(total_due)} · đã nhận theo ảnh {money(total_received)}"])
-    summary.append([])
-    summary.append(["Trạng thái", "Số đơn", "Đơn"])
+    invoices = bao_cao.read_invoice_reconciliation(Path(args.invoice_reconciliation).expanduser()) if args.invoice_reconciliation else None
+    report = bao_cao.build_report(rows, proofs, large_order=LARGE_ORDER, source_images=Path(args.images).name,
+                                  source_orders=order_file.name, invoices=invoices)
+    bao_cao.excel_dashboard(summary, report)
     lines = []
     for status in STATUS_ORDER:
-        items = groups.get(status, [])
+        items = [r for r in rows if r["status"] == status]
         if status == "Trả thiếu":
-            names = [f"{o['order_code']} {o['customer']} (thiếu {money(m)})" for o, _, m in items]
+            names = [f"{r['code']} {r['customer']} (thiếu {money(r['missing'])})" for r in items]
         elif status == "Chưa trả":
-            names = [f"{o['order_code']} {o['customer']} ({money(o['amount_due'])})" for o, _, _ in items]
+            names = [f"{r['code']} {r['customer']} ({money(r['due'])})" for r in items]
         else:
-            names = [f"{o['order_code']} {o['customer']}" for o, _, _ in items]
-        summary.append([status, len(items), "; ".join(names)])
-        for cell in summary[summary.max_row]:
-            cell.fill = PatternFill("solid", fgColor=STATUS_FILL[status])
+            names = [f"{r['code']} {r['customer']}" for r in items]
         lines.append(f"  {status}: {len(items)}" + (f" — {'; '.join(names)}" if names else ""))
-    by_result = Counter("Trùng" if p["fill"] == RED and "Trùng" in p["result"] else
-                        "Đã ghép" if p["fill"] == GREEN else "Cần xem" for p in proofs)
-    summary.append([])
-    summary.append(["Ảnh", len(proofs), f"Đã ghép {by_result['Đã ghép']} · Trùng {by_result['Trùng']} · Cần xem {by_result['Cần xem']}"])
-    summary.append([])
-    summary.append(["Lưu ý: số tiền lấy từ ảnh khách gửi. Đơn giá trị lớn cần xem sao kê ngân hàng trước khi giao. "
-                    "Agent không gửi tin nhắn; cột tin nhắn chỉ là bản soạn sẵn."])
-    summary["A1"].font = Font(bold=True, size=14)
-    for cell in summary[4]:
-        cell.font = Font(bold=True)
-    summary.column_dimensions["A"].width = 16
-    summary.column_dimensions["B"].width = 9
-    summary.column_dimensions["C"].width = 110
 
     for sheet in (ws, detail):
         for cell in sheet[1]:
@@ -1024,8 +1018,14 @@ def reconcile_payments(args) -> Path:
             ws.cell(row, col).number_format = "#,##0"
     for row in range(2, detail.max_row + 1):
         detail.cell(row, 2).number_format = "#,##0"
+    for row in range(2, ws.max_row + 1):
+        ws.row_dimensions[row].height = 30
+        for cell in ws[row]:
+            cell.alignment = Alignment(vertical="center", wrap_text=cell.column >= 8)
     wb.save(out)
+    dashboard = bao_cao.html_dashboard(out.with_suffix(".html"), report)
     print("Kết quả đối soát:\n" + "\n".join(lines), file=sys.stderr)
+    print(f"Dashboard: {dashboard}", file=sys.stderr)
     return out
 
 
@@ -1061,7 +1061,7 @@ def parser() -> argparse.ArgumentParser:
     rec.add_argument("--cot", dest="columns", required=True, help="Các cột cần so sánh, cách nhau bằng dấu phẩy")
     rec.add_argument("--dau-ra", dest="output", required=True, help="Đường dẫn tệp Excel kết quả")
     rec.set_defaults(func=reconcile)
-    pay = sub.add_parser("doi-soat-thanh-toan", help="Dò ảnh chuyển khoản với danh sách đơn: ai trả đủ, trả thiếu, chưa trả")
+    pay = sub.add_parser("doi-soat-thanh-toan", help="Dò ảnh chuyển khoản với danh sách đơn: đủ/thiếu/chưa có ảnh khớp theo dữ liệu được cung cấp")
     pay.add_argument("images", metavar="ANH_CHUYEN_KHOAN", help="Ảnh hoặc thư mục ảnh JPG/JPEG/PNG đã tải từ Zalo")
     pay.add_argument("orders", metavar="DANH_SACH_DON", help="Tệp Excel danh sách đơn hàng")
     pay.add_argument("--trang-tinh", dest="sheet", help="Tên trang tính danh sách đơn; mặc định trang đầu tiên")
@@ -1070,7 +1070,9 @@ def parser() -> argparse.ArgumentParser:
     pay.add_argument("--cot-so-tien", dest="amount_column", help="Cột số phải thu; mặc định tự nhận (Phải thu, Số tiền, Tổng tiền...)")
     pay.add_argument("--cot-dien-thoai", dest="phone_column", help="Cột số điện thoại; mặc định tự nhận nếu có (SĐT, Số điện thoại...)")
     pay.add_argument("--dau-ra", dest="output", default=f"output/doi-soat-{date.today():%Y-%m-%d}.xlsx",
-                     help="Tệp Excel kết quả; trùng tên thì tự thêm số, không ghi đè")
+                     help="Tệp Excel kết quả; trùng tên thì tự thêm số, không ghi đè. Dashboard HTML ghi cạnh, cùng tên")
+    pay.add_argument("--doi-chieu-hoa-don", dest="invoice_reconciliation",
+                     help="Tệp kết quả lệnh doi-chieu hóa đơn (tùy chọn) để đưa vào dashboard")
     pay.set_defaults(func=reconcile_payments)
     return p
 

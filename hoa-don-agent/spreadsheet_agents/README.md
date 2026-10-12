@@ -57,11 +57,14 @@ spreadsheet_agents/.venv/bin/python spreadsheet_agents/agent.py doi-soat-thanh-t
 
 Agent tự nhận cột mã đơn, tên khách, số phải thu và SĐT theo các tên thường gặp (`Mã đơn`, `Mã ĐH`, `Khách hàng`, `Họ tên`, `Phải thu`, `Tổng tiền`, `SĐT`...). Tên cột khác thì chỉ định bằng `--cot-ma-don`, `--cot-khach-hang`, `--cot-so-tien`, `--cot-dien-thoai`; trang tính khác trang đầu thì thêm `--trang-tinh`. Kết quả mặc định ở `output/doi-soat-<ngày>.xlsx`; tên đã có thì tự thêm số, không ghi đè.
 
-Excel kết quả có ba trang:
+Kết quả gồm file Excel và **dashboard HTML cùng tên** (ví dụ `doi-soat-2026-10-12.xlsx` và `doi-soat-2026-10-12.html`):
 
-- `Tóm tắt`: số đơn và tên khách theo bốn nhóm **Đã trả đủ · Trả thiếu · Chưa trả · Cần kiểm tra**, tổng phải thu và tổng đã nhận theo ảnh.
+- `Tóm tắt` (Excel): dạng dashboard với ô số liệu lớn, biểu đồ giá trị theo trạng thái và tiền về theo giờ, danh sách việc cần làm.
 - `Đơn hàng`: mỗi đơn một dòng, có số còn thiếu, ảnh đã ghép, căn cứ ghép, việc cần làm và tin nhắn nhắc soạn sẵn (agent không gửi).
 - `Ảnh chuyển khoản`: mỗi ảnh một dòng, có số tiền, nội dung, người chuyển, đơn được ghép và kết quả.
+- Dashboard HTML: tự chứa, mở offline bằng trình duyệt. Hiện số đã thu, còn phải thu, đơn sẵn sàng giao, việc cần làm có nút chép tin nhắn, tiền về theo giờ, thu theo kênh bán (nếu có cột `Kênh bán`), đơn lớn cần xem sao kê và bảng tất cả đơn có lọc. Có giao diện sáng/tối và in được.
+
+Muốn dashboard có thêm phần hóa đơn điện tử: chạy `doi-chieu` hóa đơn trước, rồi thêm `--doi-chieu-hoa-don <tệp-kết-quả-doi-chieu.xlsx>` vào lệnh `doi-soat-thanh-toan`.
 
 Ghép chắc khi có mã đơn, số điện thoại, hoặc tên khách kèm đúng số tiền. Chỉ có tên hoặc chỉ trùng số tiền thì agent gợi ý và đưa đơn vào `Cần kiểm tra`, không báo `Chưa trả`. Ảnh giống hệt hoặc trùng mã giao dịch không được cộng lần hai. Nhận dư cũng vào `Cần kiểm tra`. Số tiền lấy từ ảnh khách gửi; đơn giá trị lớn cần xem sao kê trước khi giao.
 
