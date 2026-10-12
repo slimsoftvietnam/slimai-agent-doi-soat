@@ -231,7 +231,8 @@ footer { color: var(--muted); font-size: 12px; text-align: center; padding: 28px
 @media (max-width: 560px) {
   .wrap { padding: 0 14px; }
   .nav { padding-top: 14px; }
-  .pills-wrap { width: 100%; } .pills { width: 100%; } .pills button { flex: 1; padding: 8px 6px; }
+  .pills-wrap { width: 100%; } .pills { width: 100%; overflow-x: auto; scrollbar-width: none; } .pills::-webkit-scrollbar { display: none; }
+  .pills button { flex: 1 0 auto; padding: 8px 12px; }
   .welcome { margin: 22px 0 16px; } .welcome h1 { font-size: 22px; }
   .welcome-actions { width: 100%; } .toggle { flex: 1; } .toggle button { flex: 1; }
   .c3 { grid-column: span 12; }
@@ -259,11 +260,11 @@ footer { color: var(--muted); font-size: 12px; text-align: center; padding: 28px
 }
 </style>
 </head>
-<body data-role="chu-shop">
+<body>
 <div class="wrap">
   <header class="nav">
     <div class="brand"><div class="brand-mark" aria-hidden="true"><span></span></div>Đối soát</div>
-    <nav class="pills-wrap" aria-label="Xem theo vai trò"><div class="pills" id="roles"></div></nav>
+    <nav class="pills-wrap" aria-label="Đi tới phần"><div class="pills" id="sections"></div></nav>
     <div class="nav-right">
       <button class="circle" id="theme" type="button" aria-label="Đổi giao diện sáng tối">
         <svg viewBox="0 0 16 16" fill="none"><path d="M13.5 9.5A5.5 5.5 0 116.5 2.5a4.5 4.5 0 007 7z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
@@ -383,7 +384,7 @@ footer { color: var(--muted); font-size: 12px; text-align: center; padding: 28px
   <footer id="foot"></footer>
 </div>
 
-<script id="report" type="application/json">{"title": "Đối soát chuyển khoản", "date": "12/10/2026", "generated": "21:39 12/10/2026", "sources": {"images": "1-anh-chuyen-khoan-zalo", "orders": "phan-mem-ban-hang-12-10-2026.xlsx"}, "large_order": 2000000, "totals": {"due": 20200000.0, "received": 16970000.0, "outstanding": 3250000.0, "surplus": 20000.0, "surplus_count": 1}, "status": [{"name": "Đã trả đủ", "count": 10, "due": 15470000.0, "received": 15470000.0, "missing": 0.0}, {"name": "Trả thiếu", "count": 1, "due": 1200000.0, "received": 700000.0, "missing": 500000.0}, {"name": "Chưa trả", "count": 2, "due": 1880000.0, "received": 0.0, "missing": 1880000.0}, {"name": "Cần kiểm tra", "count": 3, "due": 1650000.0, "received": 800000.0, "missing": 870000.0}], "ready": 10, "todo": 6, "proofs": {"total": 17, "kinds": {"Đã ghép": 12, "Gợi ý": 1, "Chưa ghép": 1, "Không đọc được": 2, "Trùng": 1}, "auto_rate": 0.75, "duplicate_amount": 320000.0, "unassigned_amount": 680000.0}, "hourly": [{"hour": 8, "amount": 450000.0, "count": 1}, {"hour": 9, "amount": 1020000.0, "count": 2}, {"hour": 10, "amount": 300000.0, "count": 1}, {"hour": 11, "amount": 7700000.0, "count": 3}, {"hour": 13, "amount": 350000.0, "count": 1}, {"hour": 14, "amount": 4790000.0, "count": 2}, {"hour": 15, "amount": 2360000.0, "count": 2}], "hourly_missing": {"count": 0, "amount": 0}, "channels": [{"name": "Điện thoại", "due": 5400000.0, "received": 5400000.0, "count": 1}, {"name": "Facebook", "due": 4800000.0, "received": 4300000.0, "count": 3}, {"name": "Zalo", "due": 4530000.0, "received": 3660000.0, "count": 8}, {"name": "Email", "due": 3240000.0, "received": 3240000.0, "count": 1}, {"name": "Website", "due": 2230000.0, "received": 350000.0, "count": 3}], "large": [{"code": "DH1008", "customer": "Công ty TNHH Nội thất Gỗ Việt", "phone": "0243888999", "channel": "Điện thoại", "due": 5400000.0, "received": 5400000.0, "missing": 0.0, "status": "Đã trả đủ", "action": "Đủ theo ảnh; xem sao kê trước khi xác nhận đơn hoặc giao hàng", "message": "", "images": "z6042818034470_5d2a90.png", "evidence": "có mã đơn, có tên khách, đúng số tiền"}, {"code": "DH1012", "customer": "Công ty CP Sự kiện Ánh Dương", "phone": "0283777666", "channel": "Email", "due": 3240000.0, "received": 3240000.0, "missing": 0.0, "status": "Đã trả đủ", "action": "Đủ theo ảnh; xem sao kê trước khi xác nhận đơn hoặc giao hàng", "message": "", "images": "z6042818462531_2e7b9f.png", "evidence": "có mã đơn, có tên khách, đúng số tiền"}, {"code": "DH1015", "customer": "Lý Thanh Tâm", "phone": "0917888999", "channel": "Facebook", "due": 2100000.0, "received": 2100000.0, "missing": 0.0, "status": "Đã trả đủ", "action": "Đủ theo ảnh; xem sao kê trước khi xác nhận đơn hoặc giao hàng", "message": "", "images": "z6042818680147_41b8ac.jpg", "evidence": "có mã đơn, có tên khách, đúng số tiền"}], "orders": [{"code": "DH1001", "customer": "Nguyễn Văn An", "phone": "0901111222", "channel": "Zalo", "due": 450000.0, "received": 450000.0, "missing": 0.0, "status": "Đã trả đủ", "action": "Đủ theo ảnh; kiểm tra sao kê theo quy trình trước khi xác nhận đơn", "message": "", "images": "z6042817353390_8f1c2a.jpg", "evidence": "có mã đơn, có tên khách, đúng số tiền"}, {"code": "DH1002", "customer": "Trần Thị Bình", "phone": "0902222333", "channel": "Facebook", "due": 1200000.0, "received": 700000.0, "missing": 500000.0, "status": "Trả thiếu", "action": "Nhắc khách chuyển thêm 500.000đ", "message": "Chào Trần Thị Bình, shop đã nhận 700.000đ cho đơn DH1002. Đơn còn thiếu 500.000đ, anh/chị kiểm tra giúp shop nhé. Cảm ơn anh/chị!", "images": "z6042817411205_a7d3e9.jpg", "evidence": "có mã đơn"}, {"code": "DH1003", "customer": "Lê Minh Châu", "phone": "0912345678", "channel": "Zalo", "due": 320000.0, "received": 320000.0, "missing": 0.0, "status": "Đã trả đủ", "action": "Đủ theo ảnh; kiểm tra sao kê theo quy trình trước khi xác nhận đơn", "message": "", "images": "z6042817502117_3b9e01.jpg", "evidence": "có số điện thoại, đúng số tiền"}, {"code": "DH1004", "customer": "Phạm Quốc Dũng", "phone": "0904444555", "channel": "Website", "due": 890000.0, "received": 0, "missing": 890000.0, "status": "Chưa trả", "action": "Chưa tìm thấy ảnh ghép chắc; kiểm tra Zalo/sao kê trước khi nhắc khách", "message": "Chào Phạm Quốc Dũng, với đơn DH1004 (890.000đ), shop chưa ghép được ảnh thanh toán trong dữ liệu cuối ngày. Nếu anh/chị đã chuyển, gửi giúp shop ảnh chuyển khoản nhé. Cảm ơn anh/chị!", "images": "", "evidence": ""}, {"code": "DH1005", "customer": "Hoàng Thu Hà", "phone": "0905555666", "channel": "Zalo", "due": 560000.0, "received": 560000.0, "missing": 0.0, "status": "Đã trả đủ", "action": "Đủ theo ảnh; kiểm tra sao kê theo quy trình trước khi xác nhận đơn", "message": "", "images": "z6042817618842_c41f77.jpg, z6042817733015_77ab02.jpg", "evidence": "có mã đơn, có tên khách"}, {"code": "DH1006", "customer": "Võ Thanh Em", "phone": "0906666777", "channel": "Zalo", "due": 250000.0, "received": 0, "missing": 250000.0, "status": "Cần kiểm tra", "action": "Mở ảnh z6042817840331_e0d5b8.jpg (chỉ đúng số tiền, chưa đủ để ghép) để xác nhận", "message": "", "images": "", "evidence": ""}, {"code": "DH1007", "customer": "Đỗ Gia Huy", "phone": "0907777888", "channel": "Facebook", "due": 1500000.0, "received": 1500000.0, "missing": 0.0, "status": "Đã trả đủ", "action": "Đủ theo ảnh; kiểm tra sao kê theo quy trình trước khi xác nhận đơn", "message": "", "images": "z6042817921456_19ce4d.jpg", "evidence": "có tên khách, đúng số tiền"}, {"code": "DH1008", "customer": "Công ty TNHH Nội thất Gỗ Việt", "phone": "0243888999", "channel": "Điện thoại", "due": 5400000.0, "received": 5400000.0, "missing": 0.0, "status": "Đã trả đủ", "action": "Đủ theo ảnh; xem sao kê trước khi xác nhận đơn hoặc giao hàng", "message": "", "images": "z6042818034470_5d2a90.png", "evidence": "có mã đơn, có tên khách, đúng số tiền"}, {"code": "DH1009", "customer": "Bùi Ngọc Lan", "phone": "0909999000", "channel": "Zalo", "due": 780000.0, "received": 800000.0, "missing": 0, "status": "Cần kiểm tra", "action": "Nhận dư 20.000đ; xác minh hoàn tiền hoặc trừ đơn sau", "message": "", "images": "z6042818115902_b8e6c3.jpg", "evidence": "có mã đơn, có tên khách"}, {"code": "DH1010", "customer": "Đặng Hữu Phước", "phone": "0911222333", "channel": "Website", "due": 350000.0, "received": 350000.0, "missing": 0.0, "status": "Đã trả đủ", "action": "Đủ theo ảnh; kiểm tra sao kê theo quy trình trước khi xác nhận đơn", "message": "", "images": "z6042818207719_0f4ad1.jpg", "evidence": "có mã đơn, có tên khách, đúng số tiền"}, {"code": "DH1011", "customer": "Ngô Thị Kim", "phone": "0913444555", "channel": "Zalo", "due": 620000.0, "received": 0, "missing": 620000.0, "status": "Cần kiểm tra", "action": "Mở ảnh z6042818350288_6ac2e5.jpg (có mã đơn nhưng không đọc được số tiền) để xác nhận", "message": "", "images": "", "evidence": ""}, {"code": "DH1012", "customer": "Công ty CP Sự kiện Ánh Dương", "phone": "0283777666", "channel": "Email", "due": 3240000.0, "received": 3240000.0, "missing": 0.0, "status": "Đã trả đủ", "action": "Đủ theo ảnh; xem sao kê trước khi xác nhận đơn hoặc giao hàng", "message": "", "images": "z6042818462531_2e7b9f.png", "evidence": "có mã đơn, có tên khách, đúng số tiền"}, {"code": "DH1013", "customer": "Trịnh Văn Long", "phone": "0915666777", "channel": "Zalo", "due": 1150000.0, "received": 1150000.0, "missing": 0.0, "status": "Đã trả đủ", "action": "Đủ theo ảnh; kiểm tra sao kê theo quy trình trước khi xác nhận đơn", "message": "", "images": "z6042818573004_d9f310.jpg", "evidence": "1 lần chuyển cho 2 đơn: có mã các đơn, tổng tiền khớp"}, {"code": "DH1014", "customer": "Trịnh Văn Long", "phone": "0915666777", "channel": "Zalo", "due": 400000.0, "received": 400000.0, "missing": 0.0, "status": "Đã trả đủ", "action": "Đủ theo ảnh; kiểm tra sao kê theo quy trình trước khi xác nhận đơn", "message": "", "images": "z6042818573004_d9f310.jpg", "evidence": "1 lần chuyển cho 2 đơn: có mã các đơn, tổng tiền khớp"}, {"code": "DH1015", "customer": "Lý Thanh Tâm", "phone": "0917888999", "channel": "Facebook", "due": 2100000.0, "received": 2100000.0, "missing": 0.0, "status": "Đã trả đủ", "action": "Đủ theo ảnh; xem sao kê trước khi xác nhận đơn hoặc giao hàng", "message": "", "images": "z6042818680147_41b8ac.jpg", "evidence": "có mã đơn, có tên khách, đúng số tiền"}, {"code": "DH1016", "customer": "Mai Phương Thảo", "phone": "0918000111", "channel": "Website", "due": 990000.0, "received": 0, "missing": 990000.0, "status": "Chưa trả", "action": "Chưa tìm thấy ảnh ghép chắc; kiểm tra Zalo/sao kê trước khi nhắc khách", "message": "Chào Mai Phương Thảo, với đơn DH1016 (990.000đ), shop chưa ghép được ảnh thanh toán trong dữ liệu cuối ngày. Nếu anh/chị đã chuyển, gửi giúp shop ảnh chuyển khoản nhé. Cảm ơn anh/chị!", "images": "", "evidence": ""}], "images": [{"source_file": "z6042817353390_8f1c2a.jpg", "amount": 450000.0, "transferred_at": "12/10/2026 08:41:07", "matched_order": "DH1001", "result": "Đã ghép", "kind": "Đã ghép"}, {"source_file": "z6042817411205_a7d3e9.jpg", "amount": 700000.0, "transferred_at": "12/10/2026 09:12:45", "matched_order": "DH1002", "result": "Đã ghép", "kind": "Đã ghép"}, {"source_file": "z6042817502117_3b9e01.jpg", "amount": 320000.0, "transferred_at": "09:33 - 12/10/2026", "matched_order": "DH1003", "result": "Đã ghép", "kind": "Đã ghép"}, {"source_file": "z6042817618842_c41f77.jpg", "amount": 300000.0, "transferred_at": "12/10/2026 10:02:19", "matched_order": "DH1005", "result": "Đã ghép", "kind": "Đã ghép"}, {"source_file": "z6042817733015_77ab02.jpg", "amount": 260000.0, "transferred_at": "12/10/2026 15:47:52", "matched_order": "DH1005", "result": "Đã ghép", "kind": "Đã ghép"}, {"source_file": "z6042817840331_e0d5b8.jpg", "amount": 250000.0, "transferred_at": "12/10/2026 10:50:31", "matched_order": "DH1006", "result": "Gợi ý, cần người xác nhận", "kind": "Gợi ý"}, {"source_file": "z6042817921456_19ce4d.jpg", "amount": 1500000.0, "transferred_at": "12/10/2026 11:05:44", "matched_order": "DH1007", "result": "Đã ghép", "kind": "Đã ghép"}, {"source_file": "z6042818034470_5d2a90.png", "amount": 5400000.0, "transferred_at": "12/10/2026 11:31:02", "matched_order": "DH1008", "result": "Đã ghép", "kind": "Đã ghép"}, {"source_file": "z6042818115902_b8e6c3.jpg", "amount": 800000.0, "transferred_at": "11:42 - 12/10/2026", "matched_order": "DH1009", "result": "Đã ghép", "kind": "Đã ghép"}, {"source_file": "z6042818207719_0f4ad1.jpg", "amount": 350000.0, "transferred_at": "42/10/2026 13:22:16", "matched_order": "DH1010", "result": "Đã ghép", "kind": "Đã ghép"}, {"source_file": "z6042818350288_6ac2e5.jpg", "amount": null, "transferred_at": "12/10/2026 14:01:33", "matched_order": "DH1011", "result": "Không đọc được số tiền; mở ảnh kiểm tra", "kind": "Không đọc được"}, {"source_file": "z6042818462531_2e7b9f.png", "amount": 3240000.0, "transferred_at": "12/40/2026 14:20:09", "matched_order": "DH1012", "result": "Đã ghép", "kind": "Đã ghép"}, {"source_file": "z6042818573004_d9f310.jpg", "amount": 1550000.0, "transferred_at": "12/10/2026 14:48:55", "matched_order": "DH1013, DH1014", "result": "Đã ghép, chia cho 2 đơn", "kind": "Đã ghép"}, {"source_file": "z6042818680147_41b8ac.jpg", "amount": 2100000.0, "transferred_at": "15:37 - 12/10/2026", "matched_order": "DH1015", "result": "Đã ghép", "kind": "Đã ghép"}, {"source_file": "z6042818791260_a3c6d2.jpg", "amount": 430000.0, "transferred_at": "12/10/2026 16:12:40", "matched_order": null, "result": "Chưa ghép được; xem ảnh và tìm đơn", "kind": "Chưa ghép"}, {"source_file": "z6042819002388_3b9e01.jpg", "amount": 320000.0, "transferred_at": "09:33 - 12/10/2026", "matched_order": null, "result": "Trùng với ảnh z6042817502117_3b9e01.jpg; không cộng tiền", "kind": "Trùng"}, {"source_file": "z6042819115630_7e21aa.jpg", "amount": null, "transferred_at": null, "matched_order": null, "result": "Không đọc được số tiền; có thể không phải biên nhận", "kind": "Không đọc được"}], "invoices": [{"number": "00000121", "status": "Khớp", "kind": "Khớp"}, {"number": "00000122", "status": "Khớp", "kind": "Khớp"}, {"number": "00000123", "status": "Lệch tổng tiền", "kind": "Lệch"}, {"number": "00000124", "status": "Lệch ngày hóa đơn", "kind": "Lệch"}, {"number": "00000125", "status": "Có trong phần mềm, thiếu tệp hóa đơn", "kind": "Một bên"}, {"number": "00000126", "status": "Tệp hóa đơn bị tải trùng", "kind": "Trùng"}, {"number": "00000127", "status": "Lệch MST người mua", "kind": "Lệch"}, {"number": "00000128", "status": "Có tệp hóa đơn, phần mềm chưa ghi nhận", "kind": "Một bên"}]}</script>
+<script id="report" type="application/json">{"title": "Đối soát chuyển khoản", "date": "12/10/2026", "generated": "21:43 12/10/2026", "sources": {"images": "1-anh-chuyen-khoan-zalo", "orders": "phan-mem-ban-hang-12-10-2026.xlsx"}, "large_order": 2000000, "totals": {"due": 20200000.0, "received": 16970000.0, "outstanding": 3250000.0, "surplus": 20000.0, "surplus_count": 1}, "status": [{"name": "Đã trả đủ", "count": 10, "due": 15470000.0, "received": 15470000.0, "missing": 0.0}, {"name": "Trả thiếu", "count": 1, "due": 1200000.0, "received": 700000.0, "missing": 500000.0}, {"name": "Chưa trả", "count": 2, "due": 1880000.0, "received": 0.0, "missing": 1880000.0}, {"name": "Cần kiểm tra", "count": 3, "due": 1650000.0, "received": 800000.0, "missing": 870000.0}], "ready": 10, "todo": 6, "proofs": {"total": 17, "kinds": {"Đã ghép": 12, "Gợi ý": 1, "Chưa ghép": 1, "Không đọc được": 2, "Trùng": 1}, "auto_rate": 0.75, "duplicate_amount": 320000.0, "unassigned_amount": 680000.0}, "hourly": [{"hour": 8, "amount": 450000.0, "count": 1}, {"hour": 9, "amount": 1020000.0, "count": 2}, {"hour": 10, "amount": 300000.0, "count": 1}, {"hour": 11, "amount": 7700000.0, "count": 3}, {"hour": 13, "amount": 350000.0, "count": 1}, {"hour": 14, "amount": 4790000.0, "count": 2}, {"hour": 15, "amount": 2360000.0, "count": 2}], "hourly_missing": {"count": 0, "amount": 0}, "channels": [{"name": "Điện thoại", "due": 5400000.0, "received": 5400000.0, "count": 1}, {"name": "Facebook", "due": 4800000.0, "received": 4300000.0, "count": 3}, {"name": "Zalo", "due": 4530000.0, "received": 3660000.0, "count": 8}, {"name": "Email", "due": 3240000.0, "received": 3240000.0, "count": 1}, {"name": "Website", "due": 2230000.0, "received": 350000.0, "count": 3}], "large": [{"code": "DH1008", "customer": "Công ty TNHH Nội thất Gỗ Việt", "phone": "0243888999", "channel": "Điện thoại", "due": 5400000.0, "received": 5400000.0, "missing": 0.0, "status": "Đã trả đủ", "action": "Đủ theo ảnh; xem sao kê trước khi xác nhận đơn hoặc giao hàng", "message": "", "images": "z6042818034470_5d2a90.png", "evidence": "có mã đơn, có tên khách, đúng số tiền"}, {"code": "DH1012", "customer": "Công ty CP Sự kiện Ánh Dương", "phone": "0283777666", "channel": "Email", "due": 3240000.0, "received": 3240000.0, "missing": 0.0, "status": "Đã trả đủ", "action": "Đủ theo ảnh; xem sao kê trước khi xác nhận đơn hoặc giao hàng", "message": "", "images": "z6042818462531_2e7b9f.png", "evidence": "có mã đơn, có tên khách, đúng số tiền"}, {"code": "DH1015", "customer": "Lý Thanh Tâm", "phone": "0917888999", "channel": "Facebook", "due": 2100000.0, "received": 2100000.0, "missing": 0.0, "status": "Đã trả đủ", "action": "Đủ theo ảnh; xem sao kê trước khi xác nhận đơn hoặc giao hàng", "message": "", "images": "z6042818680147_41b8ac.jpg", "evidence": "có mã đơn, có tên khách, đúng số tiền"}], "orders": [{"code": "DH1001", "customer": "Nguyễn Văn An", "phone": "0901111222", "channel": "Zalo", "due": 450000.0, "received": 450000.0, "missing": 0.0, "status": "Đã trả đủ", "action": "Đủ theo ảnh; kiểm tra sao kê theo quy trình trước khi xác nhận đơn", "message": "", "images": "z6042817353390_8f1c2a.jpg", "evidence": "có mã đơn, có tên khách, đúng số tiền"}, {"code": "DH1002", "customer": "Trần Thị Bình", "phone": "0902222333", "channel": "Facebook", "due": 1200000.0, "received": 700000.0, "missing": 500000.0, "status": "Trả thiếu", "action": "Nhắc khách chuyển thêm 500.000đ", "message": "Chào Trần Thị Bình, shop đã nhận 700.000đ cho đơn DH1002. Đơn còn thiếu 500.000đ, anh/chị kiểm tra giúp shop nhé. Cảm ơn anh/chị!", "images": "z6042817411205_a7d3e9.jpg", "evidence": "có mã đơn"}, {"code": "DH1003", "customer": "Lê Minh Châu", "phone": "0912345678", "channel": "Zalo", "due": 320000.0, "received": 320000.0, "missing": 0.0, "status": "Đã trả đủ", "action": "Đủ theo ảnh; kiểm tra sao kê theo quy trình trước khi xác nhận đơn", "message": "", "images": "z6042817502117_3b9e01.jpg", "evidence": "có số điện thoại, đúng số tiền"}, {"code": "DH1004", "customer": "Phạm Quốc Dũng", "phone": "0904444555", "channel": "Website", "due": 890000.0, "received": 0, "missing": 890000.0, "status": "Chưa trả", "action": "Chưa tìm thấy ảnh ghép chắc; kiểm tra Zalo/sao kê trước khi nhắc khách", "message": "Chào Phạm Quốc Dũng, với đơn DH1004 (890.000đ), shop chưa ghép được ảnh thanh toán trong dữ liệu cuối ngày. Nếu anh/chị đã chuyển, gửi giúp shop ảnh chuyển khoản nhé. Cảm ơn anh/chị!", "images": "", "evidence": ""}, {"code": "DH1005", "customer": "Hoàng Thu Hà", "phone": "0905555666", "channel": "Zalo", "due": 560000.0, "received": 560000.0, "missing": 0.0, "status": "Đã trả đủ", "action": "Đủ theo ảnh; kiểm tra sao kê theo quy trình trước khi xác nhận đơn", "message": "", "images": "z6042817618842_c41f77.jpg, z6042817733015_77ab02.jpg", "evidence": "có mã đơn, có tên khách"}, {"code": "DH1006", "customer": "Võ Thanh Em", "phone": "0906666777", "channel": "Zalo", "due": 250000.0, "received": 0, "missing": 250000.0, "status": "Cần kiểm tra", "action": "Mở ảnh z6042817840331_e0d5b8.jpg (chỉ đúng số tiền, chưa đủ để ghép) để xác nhận", "message": "", "images": "", "evidence": ""}, {"code": "DH1007", "customer": "Đỗ Gia Huy", "phone": "0907777888", "channel": "Facebook", "due": 1500000.0, "received": 1500000.0, "missing": 0.0, "status": "Đã trả đủ", "action": "Đủ theo ảnh; kiểm tra sao kê theo quy trình trước khi xác nhận đơn", "message": "", "images": "z6042817921456_19ce4d.jpg", "evidence": "có tên khách, đúng số tiền"}, {"code": "DH1008", "customer": "Công ty TNHH Nội thất Gỗ Việt", "phone": "0243888999", "channel": "Điện thoại", "due": 5400000.0, "received": 5400000.0, "missing": 0.0, "status": "Đã trả đủ", "action": "Đủ theo ảnh; xem sao kê trước khi xác nhận đơn hoặc giao hàng", "message": "", "images": "z6042818034470_5d2a90.png", "evidence": "có mã đơn, có tên khách, đúng số tiền"}, {"code": "DH1009", "customer": "Bùi Ngọc Lan", "phone": "0909999000", "channel": "Zalo", "due": 780000.0, "received": 800000.0, "missing": 0, "status": "Cần kiểm tra", "action": "Nhận dư 20.000đ; xác minh hoàn tiền hoặc trừ đơn sau", "message": "", "images": "z6042818115902_b8e6c3.jpg", "evidence": "có mã đơn, có tên khách"}, {"code": "DH1010", "customer": "Đặng Hữu Phước", "phone": "0911222333", "channel": "Website", "due": 350000.0, "received": 350000.0, "missing": 0.0, "status": "Đã trả đủ", "action": "Đủ theo ảnh; kiểm tra sao kê theo quy trình trước khi xác nhận đơn", "message": "", "images": "z6042818207719_0f4ad1.jpg", "evidence": "có mã đơn, có tên khách, đúng số tiền"}, {"code": "DH1011", "customer": "Ngô Thị Kim", "phone": "0913444555", "channel": "Zalo", "due": 620000.0, "received": 0, "missing": 620000.0, "status": "Cần kiểm tra", "action": "Mở ảnh z6042818350288_6ac2e5.jpg (có mã đơn nhưng không đọc được số tiền) để xác nhận", "message": "", "images": "", "evidence": ""}, {"code": "DH1012", "customer": "Công ty CP Sự kiện Ánh Dương", "phone": "0283777666", "channel": "Email", "due": 3240000.0, "received": 3240000.0, "missing": 0.0, "status": "Đã trả đủ", "action": "Đủ theo ảnh; xem sao kê trước khi xác nhận đơn hoặc giao hàng", "message": "", "images": "z6042818462531_2e7b9f.png", "evidence": "có mã đơn, có tên khách, đúng số tiền"}, {"code": "DH1013", "customer": "Trịnh Văn Long", "phone": "0915666777", "channel": "Zalo", "due": 1150000.0, "received": 1150000.0, "missing": 0.0, "status": "Đã trả đủ", "action": "Đủ theo ảnh; kiểm tra sao kê theo quy trình trước khi xác nhận đơn", "message": "", "images": "z6042818573004_d9f310.jpg", "evidence": "1 lần chuyển cho 2 đơn: có mã các đơn, tổng tiền khớp"}, {"code": "DH1014", "customer": "Trịnh Văn Long", "phone": "0915666777", "channel": "Zalo", "due": 400000.0, "received": 400000.0, "missing": 0.0, "status": "Đã trả đủ", "action": "Đủ theo ảnh; kiểm tra sao kê theo quy trình trước khi xác nhận đơn", "message": "", "images": "z6042818573004_d9f310.jpg", "evidence": "1 lần chuyển cho 2 đơn: có mã các đơn, tổng tiền khớp"}, {"code": "DH1015", "customer": "Lý Thanh Tâm", "phone": "0917888999", "channel": "Facebook", "due": 2100000.0, "received": 2100000.0, "missing": 0.0, "status": "Đã trả đủ", "action": "Đủ theo ảnh; xem sao kê trước khi xác nhận đơn hoặc giao hàng", "message": "", "images": "z6042818680147_41b8ac.jpg", "evidence": "có mã đơn, có tên khách, đúng số tiền"}, {"code": "DH1016", "customer": "Mai Phương Thảo", "phone": "0918000111", "channel": "Website", "due": 990000.0, "received": 0, "missing": 990000.0, "status": "Chưa trả", "action": "Chưa tìm thấy ảnh ghép chắc; kiểm tra Zalo/sao kê trước khi nhắc khách", "message": "Chào Mai Phương Thảo, với đơn DH1016 (990.000đ), shop chưa ghép được ảnh thanh toán trong dữ liệu cuối ngày. Nếu anh/chị đã chuyển, gửi giúp shop ảnh chuyển khoản nhé. Cảm ơn anh/chị!", "images": "", "evidence": ""}], "images": [{"source_file": "z6042817353390_8f1c2a.jpg", "amount": 450000.0, "transferred_at": "12/10/2026 08:41:07", "matched_order": "DH1001", "result": "Đã ghép", "kind": "Đã ghép"}, {"source_file": "z6042817411205_a7d3e9.jpg", "amount": 700000.0, "transferred_at": "12/10/2026 09:12:45", "matched_order": "DH1002", "result": "Đã ghép", "kind": "Đã ghép"}, {"source_file": "z6042817502117_3b9e01.jpg", "amount": 320000.0, "transferred_at": "09:33 - 12/10/2026", "matched_order": "DH1003", "result": "Đã ghép", "kind": "Đã ghép"}, {"source_file": "z6042817618842_c41f77.jpg", "amount": 300000.0, "transferred_at": "12/10/2026 10:02:19", "matched_order": "DH1005", "result": "Đã ghép", "kind": "Đã ghép"}, {"source_file": "z6042817733015_77ab02.jpg", "amount": 260000.0, "transferred_at": "12/10/2026 15:47:52", "matched_order": "DH1005", "result": "Đã ghép", "kind": "Đã ghép"}, {"source_file": "z6042817840331_e0d5b8.jpg", "amount": 250000.0, "transferred_at": "12/10/2026 10:50:31", "matched_order": "DH1006", "result": "Gợi ý, cần người xác nhận", "kind": "Gợi ý"}, {"source_file": "z6042817921456_19ce4d.jpg", "amount": 1500000.0, "transferred_at": "12/10/2026 11:05:44", "matched_order": "DH1007", "result": "Đã ghép", "kind": "Đã ghép"}, {"source_file": "z6042818034470_5d2a90.png", "amount": 5400000.0, "transferred_at": "12/10/2026 11:31:02", "matched_order": "DH1008", "result": "Đã ghép", "kind": "Đã ghép"}, {"source_file": "z6042818115902_b8e6c3.jpg", "amount": 800000.0, "transferred_at": "11:42 - 12/10/2026", "matched_order": "DH1009", "result": "Đã ghép", "kind": "Đã ghép"}, {"source_file": "z6042818207719_0f4ad1.jpg", "amount": 350000.0, "transferred_at": "42/10/2026 13:22:16", "matched_order": "DH1010", "result": "Đã ghép", "kind": "Đã ghép"}, {"source_file": "z6042818350288_6ac2e5.jpg", "amount": null, "transferred_at": "12/10/2026 14:01:33", "matched_order": "DH1011", "result": "Không đọc được số tiền; mở ảnh kiểm tra", "kind": "Không đọc được"}, {"source_file": "z6042818462531_2e7b9f.png", "amount": 3240000.0, "transferred_at": "12/40/2026 14:20:09", "matched_order": "DH1012", "result": "Đã ghép", "kind": "Đã ghép"}, {"source_file": "z6042818573004_d9f310.jpg", "amount": 1550000.0, "transferred_at": "12/10/2026 14:48:55", "matched_order": "DH1013, DH1014", "result": "Đã ghép, chia cho 2 đơn", "kind": "Đã ghép"}, {"source_file": "z6042818680147_41b8ac.jpg", "amount": 2100000.0, "transferred_at": "15:37 - 12/10/2026", "matched_order": "DH1015", "result": "Đã ghép", "kind": "Đã ghép"}, {"source_file": "z6042818791260_a3c6d2.jpg", "amount": 430000.0, "transferred_at": "12/10/2026 16:12:40", "matched_order": null, "result": "Chưa ghép được; xem ảnh và tìm đơn", "kind": "Chưa ghép"}, {"source_file": "z6042819002388_3b9e01.jpg", "amount": 320000.0, "transferred_at": "09:33 - 12/10/2026", "matched_order": null, "result": "Trùng với ảnh z6042817502117_3b9e01.jpg; không cộng tiền", "kind": "Trùng"}, {"source_file": "z6042819115630_7e21aa.jpg", "amount": null, "transferred_at": null, "matched_order": null, "result": "Không đọc được số tiền; có thể không phải biên nhận", "kind": "Không đọc được"}], "invoices": [{"number": "00000121", "status": "Khớp", "kind": "Khớp"}, {"number": "00000122", "status": "Khớp", "kind": "Khớp"}, {"number": "00000123", "status": "Lệch tổng tiền", "kind": "Lệch"}, {"number": "00000124", "status": "Lệch ngày hóa đơn", "kind": "Lệch"}, {"number": "00000125", "status": "Có trong phần mềm, thiếu tệp hóa đơn", "kind": "Một bên"}, {"number": "00000126", "status": "Tệp hóa đơn bị tải trùng", "kind": "Trùng"}, {"number": "00000127", "status": "Lệch MST người mua", "kind": "Lệch"}, {"number": "00000128", "status": "Có tệp hóa đơn, phần mềm chưa ghi nhận", "kind": "Một bên"}]}</script>
 <script>
 (function () {
   "use strict";
@@ -419,10 +420,6 @@ footer { color: var(--muted); font-size: 12px; text-align: center; padding: 28px
   var MOTION = !matchMedia("(prefers-reduced-motion: reduce)").matches;
   function load(k, d) { try { return localStorage.getItem(k) || d; } catch (e) { return d; } }
   function save(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
-  var ROLES = { "chu-shop": "Chủ shop", "quan-ly": "Quản lý", "ke-toan": "Kế toán" };
-  var role = (location.hash || "").slice(1);
-  if (!ROLES[role]) role = load("doisoat-role", "chu-shop");
-  if (!ROLES[role]) role = "chu-shop";
   var unit = load("doisoat-unit", matchMedia("(max-width: 480px)").matches ? "gon" : "du");
 
   // ---------- Tiện ích ----------
@@ -475,92 +472,48 @@ footer { color: var(--muted); font-size: 12px; text-align: center; padding: 28px
   var ofOrders = function (v) { return Math.round(v) + "/" + R.orders.length; };
   var txCount = R.hourly.reduce(function (a, h) { return a + h.count; }, 0);
 
-  // ---------- Nội dung theo vai trò ----------
-  // foot: [tone, đậm, chữ thường]; tone up/down/warn quyết định mũi tên và màu.
-  function views() {
-    return {
-      "chu-shop": {
-        hello: "Chào chủ shop", lead: "Hôm nay thu được bao nhiêu, còn bao nhiêu chưa thu, đơn nào giao được.",
-        kpis: [
-          { label: "Tổng giá trị đơn", icon: "money", value: T.due, fmt: money, foot: ["up", R.orders.length + " đơn", "hôm nay"], to: "#all-card" },
-          { label: "Còn phải thu", icon: "alert", value: T.outstanding, fmt: money, foot: ["down", R.todo + " đơn", "chưa xong"], to: "#todo-card" },
-          { label: "Đơn sẵn sàng giao", icon: "truck", value: R.ready, fmt: ofOrders, foot: ["up", money(st["Đã trả đủ"].due), "đủ tiền"], to: "#all-card" },
-          { label: "Đơn lớn chờ sao kê", icon: "bank", value: R.large.length, fmt: count, foot: [R.large.length ? "warn" : "up", money(bigSum), "trị giá"], to: "#big-card" }
-        ],
-        insights: [
-          { tone: "up", icon: "trend", num: "Thu " + pct(rate), text: [money(T.received) + " trên " + money(T.due) + "; ", R.ready + " đơn đủ tiền", " có thể giao."] },
-          { tone: "down", icon: "alert", num: R.todo + " đơn chưa xong", text: ["Còn ", money(T.outstanding), ": " + st["Trả thiếu"].count + " thiếu, " + st["Chưa trả"].count + " chưa thấy ảnh, " + st["Cần kiểm tra"].count + " cần kiểm tra."] },
-          R.large.length ? { tone: "warn", icon: "bank", num: R.large.length + " đơn lớn chờ sao kê", text: ["Trị giá ", money(bigSum), "; xác nhận tiền về rồi mới giao."] }
-                         : { tone: "up", icon: "truck", num: "Không có đơn lớn", text: ["Mọi đơn đủ tiền dưới ", money(R.large_order), "."] }
-        ]
-      },
-      "quan-ly": {
-        hello: "Chào quản lý", lead: "Hôm nay cần nhắc ai, mở ảnh nào, đơn nào giao được ngay.",
-        kpis: [
-          { label: "Đơn sẵn sàng giao", icon: "truck", value: R.ready, fmt: ofOrders, foot: ["up", pct(R.orders.length ? R.ready / R.orders.length : 0), "số đơn"], to: "#all-card" },
-          { label: "Tiền cần đòi", icon: "phone", value: remindSum, fmt: money, foot: ["down", remind.length + " khách", "cần nhắc"], to: "#todo-card" },
-          { label: "Đơn cần mở ảnh", icon: "eye", value: st["Cần kiểm tra"].count, fmt: count, foot: ["warn", "Người quyết định", ""], to: "#todo-card" },
-          weakest ? { label: "Kênh thu thấp nhất", icon: "target", value: weakest.received / weakest.due, fmt: pct, foot: ["down", weakest.name, "còn " + money(weakest.due - weakest.received)], to: "#chan-card" }
-                  : { label: "Ảnh ghép tự động", icon: "image", value: R.proofs.auto_rate, fmt: pct, foot: ["up", R.proofs.kinds["Đã ghép"] + " ảnh", "không dò tay"], to: "#img-card" }
-        ],
-        insights: [
-          { tone: "down", icon: "phone", num: remind.length + " khách cần nhắc", text: [st["Trả thiếu"].count + " trả thiếu, " + st["Chưa trả"].count + " chưa thấy ảnh. ", "Kiểm tra Zalo trước", " khi nhắc."] },
-          { tone: "warn", icon: "eye", num: st["Cần kiểm tra"].count + " đơn cần mở ảnh", text: ["Ảnh mơ hồ, mất số tiền hoặc nhận dư. ", "Người quyết định", ", không để agent đoán."] },
-          peak ? { tone: "up", icon: "clock", num: "Cao điểm " + peak.hour + "h", text: [money(peak.amount) + " về trong giờ này, ", peak.count + " giao dịch", "."] }
-               : { tone: "up", icon: "truck", num: R.ready + " đơn giao được", text: ["Trị giá ", money(st["Đã trả đủ"].due), "."] }
-        ]
-      },
-      "ke-toan": {
-        hello: "Chào kế toán", lead: "Phải thu, đã nhận, phần chênh và hóa đơn đã khớp với phần mềm chưa.",
-        kpis: [
-          { label: "Phải thu", icon: "money", value: T.due, fmt: money, foot: ["up", pct(rate), "đã nhận theo ảnh"], to: "#overview" },
-          { label: "Còn thiếu theo đơn", icon: "scale", value: T.outstanding, fmt: money, foot: ["down", R.todo + " đơn", "chưa đủ"], to: "#all-card" },
-          { label: "Nhận dư", icon: "trend", value: T.surplus, fmt: money, foot: [T.surplus_count ? "warn" : "up", T.surplus_count + " đơn", "hoàn hoặc trừ"], to: "#all-card" },
-          R.invoices ? { label: "Hóa đơn khớp", icon: "doc", value: inv["Khớp"], fmt: function (v) { return Math.round(v) + "/" + R.invoices.length; }, foot: [invIssues ? "down" : "up", invIssues + " hóa đơn", "cần xem"], to: "#inv-card" }
-                     : { label: "Ảnh trùng đã chặn", icon: "image", value: R.proofs.duplicate_amount, fmt: money, foot: ["up", R.proofs.kinds["Trùng"] + " ảnh", "không cộng"], to: "#img-card" }
-        ],
-        insights: [
-          { tone: "down", icon: "scale", num: "Chênh " + money(T.due - T.received), text: ["= còn thiếu ", money(T.outstanding), " trừ nhận dư " + money(T.surplus) + "."] },
-          { tone: "warn", icon: "money", num: money(R.proofs.unassigned_amount) + " chưa gán", text: [(R.proofs.kinds["Gợi ý"] + R.proofs.kinds["Chưa ghép"]) + " ảnh chưa ghép chắc; ", "chưa tính doanh thu", "."] },
-          R.invoices ? { tone: invIssues ? "down" : "up", icon: "doc", num: invIssues + " hóa đơn cần xem", text: [inv["Lệch"] + " lệch, " + inv["Trùng"] + " trùng, " + inv["Một bên"] + " một bên; ", inv["Khớp"] + " khớp", "."] }
-                     : { tone: "warn", icon: "doc", num: "Chưa có hóa đơn", text: ["Thêm ", "--doi-chieu-hoa-don", " để đối chiếu."] }
-        ]
-      }
-    };
-  }
+  // ---------- Số chính và ý chính: một màn hình chung cho chủ shop, quản lý, kế toán ----------
   var TONE = { up: ["var(--up)", "rgba(22,163,74,.12)"], down: ["var(--down)", "rgba(229,72,77,.11)"], warn: ["#c48a00", "rgba(242,176,30,.18)"] };
+  function renderSummary(first) {
+    var kpis = [
+      { label: "Tổng giá trị đơn", icon: "money", value: T.due, fmt: money, foot: ["up", R.orders.length + " đơn", "hôm nay"], to: "#all-card" },
+      { label: "Còn phải thu", icon: "alert", value: T.outstanding, fmt: money, foot: ["down", R.todo + " đơn", "chưa xong"], to: "#todo-card" },
+      { label: "Đơn sẵn sàng giao", icon: "truck", value: R.ready, fmt: ofOrders, foot: ["up", money(st["Đã trả đủ"].due), "đủ tiền"], to: "#all-card" },
+      { label: "Khách cần nhắc", icon: "phone", value: remind.length, fmt: count, foot: [remind.length ? "down" : "up", money(remindSum), "cần đòi"], to: "#todo-card" }
+    ];
+    var insights = [
+      { tone: "up", icon: "trend", num: "Thu " + pct(rate), text: [money(T.received) + " trên " + money(T.due) + "; ", R.ready + " đơn đủ tiền", " có thể giao."] },
+      { tone: "down", icon: "alert", num: R.todo + " đơn chưa xong", text: ["Còn ", money(T.outstanding), ": " + st["Trả thiếu"].count + " thiếu, " + st["Chưa trả"].count + " chưa thấy ảnh, " + st["Cần kiểm tra"].count + " cần mở ảnh."] }
+    ];
+    if (R.large.length) insights.push({ tone: "warn", icon: "bank", num: R.large.length + " đơn lớn chờ sao kê", text: ["Trị giá ", money(bigSum), "; xác nhận tiền về rồi mới giao."] });
+    if (R.invoices) insights.push({ tone: invIssues ? "down" : "up", icon: "doc", num: invIssues ? invIssues + " hóa đơn cần xem" : "Hóa đơn khớp hết", text: [inv["Lệch"] + " lệch, " + inv["Trùng"] + " trùng, " + inv["Một bên"] + " một bên; ", inv["Khớp"] + " khớp", "."] });
+    else if (R.proofs.unassigned_amount) insights.push({ tone: "warn", icon: "money", num: money(R.proofs.unassigned_amount) + " chưa gán đơn", text: [(R.proofs.kinds["Gợi ý"] + R.proofs.kinds["Chưa ghép"]) + " ảnh chưa ghép chắc; ", "chưa tính doanh thu", "."] });
 
-  function renderRole(first) {
-    var V = views()[role];
-    document.body.setAttribute("data-role", role);
-    $("hello").textContent = V.hello + " 👋";
-    $("lead").textContent = V.lead;
-    $("who").textContent = ROLES[role];
-    $("avatar").textContent = ROLES[role].charAt(0);
-    $("ins-for").textContent = "Dành cho " + ROLES[role].toLowerCase();
+    $("hello").textContent = "Đối soát cuối ngày 👋";
+    $("lead").textContent = R.orders.length + " đơn · " + R.proofs.total + " ảnh chuyển khoản · " + R.date + ". Hôm nay thu được bao nhiêu, còn ai chưa trả, đơn nào giao được.";
+    $("who").textContent = "Báo cáo cuối ngày";
+    $("avatar").textContent = "Đ";
+    $("ins-for").textContent = "Những điều cần biết trước khi chốt ngày";
 
     var k = clear($("kpis"));
-    V.kpis.forEach(function (t, i) {
-      var c = el("article", "card kpi c3" + (first ? "" : " swap")), top = el("div", "kpi-top"), ic = el("span", "kpi-icon");
+    kpis.forEach(function (t, i) {
+      var c = el("article", "card kpi c3"), top = el("div", "kpi-top"), ic = el("span", "kpi-icon");
       ic.appendChild(icon(t.icon)); top.append(el("span", "kpi-label", t.label), ic);
       var val = el("div", "kpi-value"), foot = el("div", "kpi-foot"), d = el("span", "delta " + t.foot[0]);
       var arrow = t.foot[0] === "up" ? "▲" : t.foot[0] === "down" ? "▼" : "●";
-      var b = el("b", null, arrow + " " + t.foot[1]); d.append(b, document.createTextNode(t.foot[2] ? " " + t.foot[2] : ""));
+      d.append(el("b", null, arrow + " " + t.foot[1]), document.createTextNode(t.foot[2] ? " " + t.foot[2] : ""));
       var a = el("a", "link"); a.href = t.to; a.append(document.createTextNode("Xem chi tiết"), icon("arrow"));
       foot.append(d, a); c.append(top, val, foot); k.appendChild(c);
-      if (!first) c.style.animationDelay = (i * 0.04) + "s";
       countUp(val, t.value, t.fmt, (first ? 300 : 0) + i * 70);
     });
 
     var box = clear($("insights"));
-    V.insights.forEach(function (it, i) {
-      var row = el("div", "list-item" + (first ? "" : " swap")), th = el("div", "thumb"), main = el("div", "li-main");
+    insights.forEach(function (it) {
+      var row = el("div", "list-item"), th = el("div", "thumb"), main = el("div", "li-main");
       th.style.color = TONE[it.tone][0]; th.style.background = TONE[it.tone][1]; th.appendChild(icon(it.icon));
-      var title = el("b", null, it.num), text = el("span");
+      var text = el("span");
       it.text.forEach(function (part, j) { if (part) text.appendChild(j % 2 ? el("strong", null, part) : document.createTextNode(part)); });
-      main.append(title, text); row.append(th, main);
-      if (!first) row.style.animationDelay = (i * 0.05) + "s";
-      box.appendChild(row);
+      main.append(el("b", null, it.num), text); row.append(th, main); box.appendChild(row);
     });
   }
 
@@ -789,7 +742,7 @@ footer { color: var(--muted); font-size: 12px; text-align: center; padding: 28px
   }
   $("q").addEventListener("input", function (e) { q = e.target.value.toLowerCase().trim(); renderTable(); });
 
-  function renderAll(first) { renderRole(first); renderOverview(); renderCumulative(); renderTodo(); renderSmall(); renderTable(); }
+  function renderAll(first) { renderSummary(first); renderOverview(); renderCumulative(); renderTodo(); renderSmall(); renderTable(); }
 
   // ---------- Điều khiển ----------
   function seg(box, options, current, onPick) {
@@ -800,7 +753,26 @@ footer { color: var(--muted); font-size: 12px; text-align: center; padding: 28px
       box.appendChild(b);
     });
   }
-  seg($("roles"), ROLES, role, function (k) { role = k; save("doisoat-role", k); if (history.replaceState) history.replaceState(null, "", "#" + k); renderRole(false); });
+  // Menu viên thuốc: chuyển nhanh tới từng phần, tự sáng mục đang xem khi cuộn.
+  var SECTIONS = [["overview", "Tổng quan"], ["todo-card", "Việc cần làm"], ["all-card", "Đơn hàng"]];
+  if (R.invoices && R.invoices.length) SECTIONS.push(["inv-card", "Hóa đơn"]);
+  var navBox = $("sections"), navButtons = {};
+  SECTIONS.forEach(function (sct, i) {
+    var b = el("button", null, sct[1]); b.type = "button"; b.setAttribute("aria-pressed", i === 0 ? "true" : "false");
+    b.addEventListener("click", function () { var t = $(sct[0]); if (t) t.scrollIntoView({ behavior: MOTION ? "smooth" : "auto", block: "start" }); });
+    navButtons[sct[0]] = b; navBox.appendChild(b);
+  });
+  function mark(id) { Object.keys(navButtons).forEach(function (k) { navButtons[k].setAttribute("aria-pressed", k === id ? "true" : "false"); }); }
+  if ("IntersectionObserver" in window) {
+    var seen = {};
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { seen[e.target.id] = e.isIntersecting ? e.intersectionRatio : 0; });
+      var best = SECTIONS.map(function (x) { return x[0]; }).filter(function (id) { return seen[id] > 0; })[0];
+      if (best) mark(best);
+    }, { rootMargin: "-20% 0px -55% 0px", threshold: [0, 0.01] });
+    SECTIONS.forEach(function (sct) { var t = $(sct[0]); if (t) io.observe(t); });
+  }
+  window.addEventListener("scroll", function () { if (window.scrollY < 120) mark(SECTIONS[0][0]); }, { passive: true });
   seg($("units"), { du: "Số đầy đủ", gon: "Rút gọn" }, unit, function (k) { unit = k; save("doisoat-unit", k); renderAll(false); });
 
   var root = document.documentElement, savedTheme = load("doisoat-theme", "");
@@ -810,13 +782,14 @@ footer { color: var(--muted); font-size: 12px; text-align: center; padding: 28px
     var next = dark ? "light" : "dark"; root.setAttribute("data-theme", next); save("doisoat-theme", next);
   });
 
-  $("gen").textContent = "Báo cáo " + R.date;
+  $("gen").textContent = R.date;
   document.title = "Đối soát " + R.date;
   $("foot").textContent = "Tạo lúc " + R.generated + " · Ảnh: " + R.sources.images + " · Đơn: " + R.sources.orders + " · Agent đối soát chuyển khoản";
   // Thẻ "Đơn lớn" cần id để link từ ô chỉ số
   $("big").parentNode.id = "big-card"; $("img-kv").parentNode.id = "img-card";
 
   renderAll(true);
+  document.querySelectorAll("#overview, #todo-card, #all-card, #inv-card").forEach(function (n) { n.style.scrollMarginTop = "16px"; });
   var rt; window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { renderOverview(); renderCumulative(); }, 150); });
 
   if (MOTION) {

@@ -42,7 +42,7 @@ $PY $A doi-chieu output/hoa-don-doc-duoc.xlsx bo_du_lieu_mau_doi_soat/3-xuat-tu-
 $PY $A doi-soat-thanh-toan bo_du_lieu_mau_doi_soat/1-anh-chuyen-khoan-zalo bo_du_lieu_mau_doi_soat/3-xuat-tu-phan-mem/phan-mem-ban-hang-12-10-2026.xlsx --doi-chieu-hoa-don output/doi-chieu-hoa-don.xlsx --dau-ra output/doi-soat-chuyen-khoan.xlsx
 ```
 
-Bước 3 tạo thêm `output/doi-soat-chuyen-khoan.html`: dashboard mở bằng trình duyệt, xem theo vai trò Chủ shop / Quản lý / Kế toán. Mở file này để xem kết quả.
+Bước 3 tạo thêm `output/doi-soat-chuyen-khoan.html`: dashboard mở bằng trình duyệt: số chính, ý chính hôm nay, việc cần làm, đơn hàng và hóa đơn trên một màn hình. Mở file này để xem kết quả.
 
 Hoặc trong Claude Code: `/hoa-don-agent đối soát bộ mẫu bo_du_lieu_mau_doi_soat`.
 

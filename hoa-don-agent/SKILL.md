@@ -16,7 +16,7 @@ Chưa có `.venv` thì cài theo `<skill>/INSTALL.md` trước. Thẻ nhiệm v�
 
 - Cần hai thứ: thư mục ảnh chuyển khoản đã tải từ Zalo và file Excel danh sách đơn. Thiếu thì hỏi người dùng; không tự mở Zalo.
 - Chạy `<python> <agent> doi-soat-thanh-toan <thư-mục-ảnh> <danh-sách-đơn.xlsx> --dau-ra output/doi-soat-<ngày>.xlsx`. Agent tự nhận cột (`Mã đơn`, `Mã ĐH`, `Khách hàng`, `Họ tên`, `Phải thu`, `Khách cần trả`, `Tổng tiền`, `SĐT`...); báo không nhận ra cột thì thêm `--cot-ma-don`, `--cot-khach-hang`, `--cot-so-tien`, `--cot-dien-thoai`, `--trang-tinh` theo đúng tên người dùng có.
-- Lệnh tạo thêm **dashboard HTML** cùng tên cạnh file Excel (dòng `Dashboard:` cuối lệnh): xem theo vai trò Chủ shop / Quản lý / Kế toán, có ý chính, chỉ số, việc cần làm. Mở dashboard cho người dùng. Đã chạy `doi-chieu` hóa đơn thì thêm `--doi-chieu-hoa-don <tệp>` để dashboard có phần hóa đơn.
+- Lệnh tạo thêm **dashboard HTML** cùng tên cạnh file Excel (dòng `Dashboard:` cuối lệnh): số chính, ý chính hôm nay, việc cần làm, đơn hàng và hóa đơn trên một màn hình. Mở dashboard cho người dùng. Đã chạy `doi-chieu` hóa đơn thì thêm `--doi-chieu-hoa-don <tệp>` để dashboard có phần hóa đơn.
 - Báo lại đúng bốn nhóm in ra cuối lệnh: Đã trả đủ, Trả thiếu (thiếu bao nhiêu), Chưa trả, Cần kiểm tra (lý do), cùng đường dẫn file Excel.
 - Dòng `Cần kiểm tra`: có thể mở ảnh được nêu để xem rồi nói rõ nhận định, nhưng không tự sửa trạng thái trong file như dữ liệu đã xác nhận.
 - Tin nhắn nhắc trong Excel chỉ là bản soạn sẵn. Không gửi tin, không xác nhận đơn hay giao hàng. Số tiền lấy từ ảnh khách gửi; nhắc người dùng xem sao kê với đơn giá trị lớn.
