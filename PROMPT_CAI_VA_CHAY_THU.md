@@ -9,7 +9,7 @@ https://github.com/slimsoftvietnam/slimai-agent-doi-soat
 Làm tuần tự trong thư mục làm việc hiện tại:
 1. Tải repo vào thư mục con `slimai-agent-doi-soat` bằng git clone. Nếu máy không có git, tải ZIP nhánh main từ GitHub và giải nén. Đọc README.md và hoa-don-agent/INSTALL.md trước khi cài.
 2. Cài skill bằng cách chép nguyên thư mục `hoa-don-agent` vào `.claude/skills/hoa-don-agent/` nếu đây là Claude Code, hoặc `.agents/skills/hoa-don-agent/` nếu đây là Codex. Tạo thư mục cha nếu cần. Nếu skill đích đã tồn tại, cập nhật thư mục đó theo bản trong repo.
-3. Cần Python 3.10+ và Tesseract có ngôn ngữ tiếng Việt (`vie`). Kiểm tra trước khi cài. Nếu thiếu phần mềm hệ thống, hỏi tôi trước khi cài; nếu đã có đủ, tạo môi trường `.venv` và cài `hoa-don-agent/spreadsheet_agents/requirements.txt` theo INSTALL.md.
+3. Cần Python 3.9+ và Tesseract có ngôn ngữ tiếng Việt (`vie`). Kiểm tra trước khi cài. Nếu thiếu phần mềm hệ thống, hỏi tôi trước khi cài; nếu đã có đủ, tạo môi trường `.venv` và cài `hoa-don-agent/spreadsheet_agents/requirements.txt` theo INSTALL.md.
 4. Đọc `hoa-don-agent/SKILL.md`, `hoa-don-agent/spreadsheet_agents/THE_NHIEM_VU.md` và README của bộ dữ liệu mẫu. Chạy thử đủ ba bước bằng chế độ OCR cục bộ, không dùng API ngoài:
    - Đối soát ảnh trong `bo_du_lieu_mau_doi_soat/1-anh-chuyen-khoan-zalo` với file `bo_du_lieu_mau_doi_soat/3-xuat-tu-phan-mem/phan-mem-ban-hang-12-10-2026.xlsx`, lưu `output/doi-soat-chuyen-khoan.xlsx`.
    - Đọc hóa đơn trong `bo_du_lieu_mau_doi_soat/2-hoa-don-dien-tu`, lưu `output/hoa-don-doc-duoc.xlsx`.

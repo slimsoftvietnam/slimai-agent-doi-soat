@@ -9,9 +9,11 @@ Chép thư mục `hoa-don-agent` (giữ nguyên cấu trúc) vào:
 | Claude Code | `<dự-án>/.claude/skills/hoa-don-agent` | `~/.claude/skills/hoa-don-agent` |
 | Codex | `<dự-án>/.agents/skills/hoa-don-agent` | `~/.codex/skills/hoa-don-agent` |
 
-## 2. Cài Python 3.10+ và Tesseract (có tiếng Việt)
+## 2. Cài Python 3.9+ và Tesseract (có tiếng Việt)
 
-- macOS: `brew install python@3.12 tesseract tesseract-lang`
+macOS đã có sẵn `python3` (3.9) là đủ, chỉ cần thêm Tesseract.
+
+- macOS: `brew install tesseract tesseract-lang`
 - Ubuntu/Debian: `sudo apt-get install python3 python3-venv tesseract-ocr tesseract-ocr-vie`
 - Windows: cài Python từ python.org, cài Tesseract bản UB Mannheim (`winget install UB-Mannheim.TesseractOCR`), chọn thêm ngôn ngữ Vietnamese khi cài. Nếu `tesseract` không có trong PATH, tạo tệp `hoa-don-agent/.env` với dòng `TESSERACT_CMD=C:\Program Files\Tesseract-OCR\tesseract.exe`.
 

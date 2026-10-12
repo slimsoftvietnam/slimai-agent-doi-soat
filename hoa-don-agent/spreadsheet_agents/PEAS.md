@@ -7,7 +7,7 @@ PEAS gồm **Performance measure** (thước đo hiệu quả), **Environment** 
 | Thành phần | Thiết kế |
 |---|---|
 | **P — Thước đo hiệu quả** | Chọn đúng luồng theo lệnh; không ghi đè dữ liệu nguồn; lưu rõ nguồn và kết quả; dừng với thông báo cụ thể nếu thiếu tệp, thư viện hoặc khóa API. |
-| **E — Môi trường** | Python 3.10+, hệ thống tệp cục bộ, môi trường ảo của dự án, Excel `.xlsx`; Gemini API tùy chọn khi đọc hóa đơn. |
+| **E — Môi trường** | Python 3.9+, hệ thống tệp cục bộ, môi trường ảo của dự án, Excel `.xlsx`; Gemini API tùy chọn khi đọc hóa đơn. |
 | **A — Hành động** | Nhận lệnh `hoa-don`, `lam-sach`, `doi-chieu` hoặc `doi-soat-thanh-toan`; kiểm tra đầu vào; gọi tác tử chuyên trách; ghi bảng tính kết quả. |
 | **S — Cảm biến** | Đường dẫn và phần mở rộng tệp, cấu trúc bảng tính, kết quả OCR/API, trường dữ liệu và lỗi đọc/ghi. |
 
