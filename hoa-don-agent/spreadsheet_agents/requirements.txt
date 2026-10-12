@@ -1,0 +1,14 @@
+pymupdf
+pdfplumber
+pytesseract
+google-genai
+pydantic
+opencv-python-headless
+Pillow
+pandas
+numpy
+openpyxl
+XlsxWriter
+python-dotenv
+loguru
+tqdm

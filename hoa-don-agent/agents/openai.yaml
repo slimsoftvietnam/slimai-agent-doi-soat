@@ -1,0 +1,5 @@
+interface:
+  display_name: "Agent đối soát chuyển khoản"
+  short_description: "Dò ảnh chuyển khoản Zalo với danh sách đơn: ai trả đủ, thiếu, chưa trả"
+  brand_color: "#0E9384"
+  default_prompt: "Dùng $hoa-don-agent dò ảnh chuyển khoản trong thư mục anh-zalo với danh sách đơn, cho tôi biết ai trả đủ, ai trả thiếu, ai chưa trả."
