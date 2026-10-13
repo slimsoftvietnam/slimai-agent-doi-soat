@@ -13,6 +13,7 @@ Một ngày bán hàng (12/10/2026) của shop hoa giả lập **Công ty TNHH H
 | `3-xuat-tu-phan-mem/phan-mem-ban-hang-12-10-2026.xlsx` | Trang `Đơn hàng` (16 đơn) và `Hóa đơn điện tử` (bảng kê 7 hóa đơn) | File xuất từ phần mềm bán hàng, tên cột kiểu `Mã ĐH`, `SĐT`, `Khách cần trả` |
 | `4-ket-qua-dung-san/` | 3 file Excel kết quả và dashboard HTML | Dùng khi máy học viên lỗi, để vẫn làm được phần nghiệm thu |
 | `DAP_AN.md` | Kết quả đúng cho từng đơn, ảnh, hóa đơn | Dùng để nghiệm thu |
+| `PHONG_CACH_DASHBOARD.md` | Phong cách dashboard Excel và HTML | Để AI dựng dashboard đúng mẫu |
 
 ## Các tình huống khó được cài sẵn
 
@@ -42,7 +43,7 @@ $PY $A doi-chieu output/hoa-don-doc-duoc.xlsx bo_du_lieu_mau_doi_soat/3-xuat-tu-
 $PY $A doi-soat-thanh-toan bo_du_lieu_mau_doi_soat/1-anh-chuyen-khoan-zalo bo_du_lieu_mau_doi_soat/3-xuat-tu-phan-mem/phan-mem-ban-hang-12-10-2026.xlsx --doi-chieu-hoa-don output/doi-chieu-hoa-don.xlsx --dau-ra output/doi-soat-chuyen-khoan.xlsx
 ```
 
-Bước 3 tạo thêm `output/doi-soat-chuyen-khoan.html`: dashboard mở bằng trình duyệt: số chính, ý chính hôm nay, việc cần làm, đơn hàng và hóa đơn trên một màn hình. Mở file này để xem kết quả.
+Bước 3 tạo **dashboard Excel** (trang `Tóm tắt`) và **dashboard HTML** `output/doi-soat-chuyen-khoan.html` mở bằng trình duyệt: số chính, ý chính hôm nay, việc cần làm, đơn hàng và hóa đơn trên một màn hình. Mở file này để xem kết quả.
 
 Hoặc trong Claude Code: `/hoa-don-agent đối soát bộ mẫu bo_du_lieu_mau_doi_soat`.
 

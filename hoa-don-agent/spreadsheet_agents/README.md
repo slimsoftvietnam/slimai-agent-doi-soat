@@ -57,9 +57,9 @@ spreadsheet_agents/.venv/bin/python spreadsheet_agents/agent.py doi-soat-thanh-t
 
 Agent tự nhận cột mã đơn, tên khách, số phải thu và SĐT theo các tên thường gặp (`Mã đơn`, `Mã ĐH`, `Khách hàng`, `Họ tên`, `Phải thu`, `Tổng tiền`, `SĐT`...). Tên cột khác thì chỉ định bằng `--cot-ma-don`, `--cot-khach-hang`, `--cot-so-tien`, `--cot-dien-thoai`; trang tính khác trang đầu thì thêm `--trang-tinh`. Kết quả mặc định ở `output/doi-soat-<ngày>.xlsx`; tên đã có thì tự thêm số, không ghi đè.
 
-Kết quả gồm file Excel và **dashboard HTML cùng tên** (ví dụ `doi-soat-2026-10-12.xlsx` và `doi-soat-2026-10-12.html`):
+Kết quả gồm file Excel (trang `Tóm tắt` là **dashboard Excel**) và **dashboard HTML cùng tên**, cùng phong cách mô tả trong [DASHBOARD_STYLE.md](DASHBOARD_STYLE.md) (ví dụ `doi-soat-2026-10-12.xlsx` và `doi-soat-2026-10-12.html`):
 
-- `Tóm tắt` (Excel): dạng dashboard với ô số liệu lớn, biểu đồ giá trị theo trạng thái và tiền về theo giờ, danh sách việc cần làm.
+- `Tóm tắt` (Excel): dashboard nền xám xanh, khối thẻ trắng, 4 số chính, biểu đồ cột gạch chéo có giờ cao điểm màu cam, đường tím tiền cộng dồn, ý chính hôm nay, việc cần làm. Số liệu biểu đồ ở trang ẩn `_bieu_do`.
 - `Đơn hàng`: mỗi đơn một dòng, có số còn thiếu, ảnh đã ghép, căn cứ ghép, việc cần làm và tin nhắn nhắc soạn sẵn (agent không gửi).
 - `Ảnh chuyển khoản`: mỗi ảnh một dòng, có số tiền, nội dung, người chuyển, đơn được ghép và kết quả.
 - Dashboard HTML: tự chứa, mở offline bằng trình duyệt. Hiện số đã thu, còn phải thu, đơn sẵn sàng giao, việc cần làm có nút chép tin nhắn, tiền về theo giờ, thu theo kênh bán (nếu có cột `Kênh bán`), đơn lớn cần xem sao kê và bảng tất cả đơn có lọc. Có giao diện sáng/tối và in được.

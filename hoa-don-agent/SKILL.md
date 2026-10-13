@@ -16,10 +16,18 @@ Chưa có `.venv` thì cài theo `<skill>/INSTALL.md` trước. Thẻ nhiệm v�
 
 - Cần hai thứ: thư mục ảnh chuyển khoản đã tải từ Zalo và file Excel danh sách đơn. Thiếu thì hỏi người dùng; không tự mở Zalo.
 - Chạy `<python> <agent> doi-soat-thanh-toan <thư-mục-ảnh> <danh-sách-đơn.xlsx> --dau-ra output/doi-soat-<ngày>.xlsx`. Agent tự nhận cột (`Mã đơn`, `Mã ĐH`, `Khách hàng`, `Họ tên`, `Phải thu`, `Khách cần trả`, `Tổng tiền`, `SĐT`...); báo không nhận ra cột thì thêm `--cot-ma-don`, `--cot-khach-hang`, `--cot-so-tien`, `--cot-dien-thoai`, `--trang-tinh` theo đúng tên người dùng có.
-- Lệnh tạo thêm **dashboard HTML** cùng tên cạnh file Excel (dòng `Dashboard:` cuối lệnh): số chính, ý chính hôm nay, việc cần làm, đơn hàng và hóa đơn trên một màn hình. Mở dashboard cho người dùng. Đã chạy `doi-chieu` hóa đơn thì thêm `--doi-chieu-hoa-don <tệp>` để dashboard có phần hóa đơn.
 - Báo lại đúng bốn nhóm in ra cuối lệnh: Đã trả đủ, Trả thiếu (thiếu bao nhiêu), Chưa trả, Cần kiểm tra (lý do), cùng đường dẫn file Excel.
 - Dòng `Cần kiểm tra`: có thể mở ảnh được nêu để xem rồi nói rõ nhận định, nhưng không tự sửa trạng thái trong file như dữ liệu đã xác nhận.
 - Tin nhắn nhắc trong Excel chỉ là bản soạn sẵn. Không gửi tin, không xác nhận đơn hay giao hàng. Số tiền lấy từ ảnh khách gửi; nhắc người dùng xem sao kê với đơn giá trị lớn.
+
+## Dashboard thống kê (luôn tạo cả hai)
+
+Mỗi lần đối soát xuất **hai dashboard cùng số liệu**, theo phong cách trong `<skill>/spreadsheet_agents/DASHBOARD_STYLE.md`:
+
+- **Dashboard Excel:** trang `Tóm tắt` của file kết quả. Nền xám xanh, khối thẻ trắng, 4 ô số chính, biểu đồ cột gạch chéo có giờ cao điểm màu cam, đường tím tiền cộng dồn, ý chính hôm nay, việc cần làm.
+- **Dashboard HTML:** file `.html` cùng tên cạnh file Excel (dòng `Dashboard:` cuối lệnh). Menu viên thuốc xanh chanh, 4 ô số chính, tổng quan thu tiền, ý chính, việc cần làm có nút chép tin nhắn, đơn hàng, hóa đơn. Chạy offline, sáng/tối, số đầy đủ/rút gọn, xem tốt trên điện thoại.
+
+Sau khi chạy: **mở cả hai** cho người dùng (dashboard HTML trước). Đã chạy `doi-chieu` hóa đơn thì thêm `--doi-chieu-hoa-don <tệp>` để cả hai dashboard có phần hóa đơn. Người dùng muốn đổi giao diện thì sửa `dashboard.html` (HTML) hoặc hàm `excel_dashboard` trong `bao_cao.py` (Excel), giữ đúng các quy tắc trong `<skill>/spreadsheet_agents/DASHBOARD_STYLE.md`, rồi chạy lại.
 
 ## Đối chiếu hóa đơn điện tử với bảng kê phần mềm
 
@@ -33,7 +41,7 @@ Repo có kèm `bo_du_lieu_mau_doi_soat/` (toàn bộ giả lập): ảnh trong `
 
 ## Không chạy được Python hoặc Tesseract
 
-Nếu không cài được môi trường, vẫn làm được việc chính bằng cách tự mở từng ảnh và file Excel, áp đúng luật ghép trong mục 6 của `THE_NHIEM_VU.md`, rồi tạo file Excel cùng cấu trúc (Tóm tắt, Đơn hàng, Ảnh chuyển khoản). Nói rõ với người dùng là đang làm theo cách này.
+Nếu không cài được môi trường, vẫn làm được việc chính bằng cách tự mở từng ảnh và file Excel, áp đúng luật ghép trong mục 6 của `THE_NHIEM_VU.md`, rồi tạo file Excel cùng cấu trúc (Tóm tắt dạng dashboard, Đơn hàng, Ảnh chuyển khoản) và dashboard HTML theo `DASHBOARD_STYLE.md`. Nói rõ với người dùng là đang làm theo cách này.
 
 ## Việc khác
 

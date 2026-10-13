@@ -125,153 +125,265 @@ def read_invoice_reconciliation(path: Path) -> list[dict]:
 
 # ---------------- Excel ----------------
 
-def excel_dashboard(ws, report: dict) -> None:
-    from openpyxl.chart import BarChart, Reference
-    from openpyxl.chart.series import DataPoint
-    from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
+# Bảng màu dùng chung với dashboard HTML (xem DASHBOARD_STYLE.md).
+PAGE, CARD, SOFT, INK, INK2, MUTED, LINE = "EEF1F5", "FFFFFF", "F4F6F9", "0D0F12", "5B6170", "9097A3", "ECEEF2"
+LIME, LIME_INK, ORANGE, PURPLE, UP, DOWN, WARN = "C8F26D", "1F2A06", "F4772E", "9B87F5", "16A34A", "E5484D", "C48A00"
+CARD_COLS = (("B", "D"), ("F", "H"), ("J", "L"), ("N", "P"))
 
-    ink, muted, line = "1B1F24", "6B7280", "E5E7EB"
+
+def key_points(report: dict) -> tuple[list[dict], list[dict]]:
+    """Bốn số chính và các ý chính, cùng nội dung với dashboard HTML."""
+    t, st = report["totals"], {s["name"]: s for s in report["status"]}
+    orders, n = report["orders"], len(report["orders"])
+    rate = t["received"] / t["due"] if t["due"] else 0
+    remind = [o for o in orders if o["status"] in ("Trả thiếu", "Chưa trả")]
+    remind_sum = sum(o["missing"] or 0 for o in remind)
+    big_sum = sum(o["due"] or 0 for o in report["large"])
+    kpis = [
+        {"label": "Tổng giá trị đơn", "icon": "◫", "value": t["due"], "fmt": "money", "tone": UP, "foot": f"▲ {n} đơn hôm nay"},
+        {"label": "Còn phải thu", "icon": "△", "value": t["outstanding"], "fmt": "money", "tone": DOWN, "foot": f"▼ {report['todo']} đơn chưa xong"},
+        {"label": "Đơn sẵn sàng giao", "icon": "⛟", "value": f"{report['ready']}/{n}", "fmt": "text", "tone": UP,
+         "foot": f"▲ {_vnd(st['Đã trả đủ']['due'])} đủ tiền"},
+        {"label": "Khách cần nhắc", "icon": "☏", "value": len(remind), "fmt": "count", "tone": DOWN if remind else UP,
+         "foot": f"▼ {_vnd(remind_sum)} cần đòi"},
+    ]
+    insights = [
+        {"tone": UP, "title": f"Thu {rate:.0%}", "text": f"{_vnd(t['received'])} trên {_vnd(t['due'])}; {report['ready']} đơn đủ tiền có thể giao."},
+        {"tone": DOWN, "title": f"{report['todo']} đơn chưa xong",
+         "text": f"Còn {_vnd(t['outstanding'])}: {st['Trả thiếu']['count']} thiếu, {st['Chưa trả']['count']} chưa thấy ảnh, "
+                 f"{st['Cần kiểm tra']['count']} cần mở ảnh."},
+    ]
+    if report["large"]:
+        insights.append({"tone": WARN, "title": f"{len(report['large'])} đơn lớn chờ sao kê",
+                         "text": f"Trị giá {_vnd(big_sum)}; xác nhận tiền về rồi mới giao."})
+    if report.get("invoices"):
+        kinds = Counter(i["kind"] for i in report["invoices"])
+        issues = len(report["invoices"]) - kinds["Khớp"]
+        insights.append({"tone": DOWN if issues else UP, "title": f"{issues} hóa đơn cần xem" if issues else "Hóa đơn khớp hết",
+                         "text": f"{kinds['Lệch']} lệch, {kinds['Trùng']} trùng, {kinds['Một bên']} một bên; {kinds['Khớp']} khớp."})
+    return kpis, insights
+
+
+def _vnd(value) -> str:
+    return f"{value or 0:,.0f}".replace(",", ".") + "đ"
+
+
+def excel_dashboard(ws, report: dict) -> None:
+    from openpyxl.chart import BarChart, LineChart, Reference
+    from openpyxl.chart.series import DataPoint
+    from openpyxl.drawing.fill import ColorChoice, PatternFillProperties
+    from openpyxl.styles import Alignment, Font, PatternFill
+
+    wb = ws.parent
     ws.sheet_view.showGridLines = False
-    for col, width in zip("ABCDEFGHIJKLM", (2, 15, 15, 15, 2, 15, 15, 15, 2, 15, 15, 15, 2)):
-        ws.column_dimensions[col].width = width
+    widths = {"A": 3, "E": 2.5, "I": 2.5, "M": 2.5, "Q": 3}
+    for i in range(1, 18):
+        col = chr(64 + i)
+        ws.column_dimensions[col].width = widths.get(col, 12.5)
 
     def fill(hex_):
         return PatternFill("solid", fgColor="FF" + hex_)
 
-    def put(cell, value, size=10, bold=False, color=ink, align="left", fmt=None):
+    def put(cell, value, size=10, bold=False, color=INK, align="left", fmt=None, wrap=False, bg=None):
         c = ws[cell]
         c.value = value
         c.font = Font(name="Arial", size=size, bold=bold, color="FF" + color)
-        c.alignment = Alignment(horizontal=align, vertical="center", wrap_text=False)
+        c.alignment = Alignment(horizontal=align, vertical="center", wrap_text=wrap)
         if fmt:
             c.number_format = fmt
+        if bg:
+            c.fill = fill(bg)
         return c
 
-    # Dải tiêu đề
-    for row in (1, 2, 3):
-        for col in "ABCDEFGHIJKLM":
-            ws[f"{col}{row}"].fill = fill("111827")
-    ws.row_dimensions[2].height = 30
-    put("B2", f"{report['title'].upper()} · {report['date']}", 18, True, "FFFFFF")
-    put("B3", f"{len(report['orders'])} đơn · {report['proofs']['total']} ảnh · tạo lúc {report['generated']}", 10, False, "9CA3AF")
+    def block(first, last, top, bottom, color=CARD):
+        for r in range(top, bottom + 1):
+            for c in range(ord(first), ord(last) + 1):
+                ws[f"{chr(c)}{r}"].fill = fill(color)
 
-    # Bốn ô số liệu
+    def money_fmt(cell):
+        cell.number_format = '#,##0"đ"'
+
     t = report["totals"]
-    pct = t["received"] / t["due"] if t["due"] else 0
-    tiles = [
-        ("B", "D", "ĐÃ THU THEO ẢNH", t["received"], "#,##0\"đ\"", f"{pct:.0%} của {t['due']:,.0f}đ phải thu".replace(",", "."), "2A78D6"),
-        ("F", "H", "CÒN PHẢI THU", t["outstanding"], "#,##0\"đ\"", f"{report['todo']} đơn chưa xong", "D03B3B"),
-        ("J", "L", "ĐƠN SẴN SÀNG GIAO", report["ready"], "0", f"trên {len(report['orders'])} đơn", "0CA30C"),
-    ]
-    for first, last, label, value, fmt, sub, accent in tiles:
-        for r in range(5, 9):
-            for col in range(ord(first), ord(last) + 1):
-                ws[f"{chr(col)}{r}"].fill = fill("F9FAFB")
-        for col in range(ord(first), ord(last) + 1):
-            ws[f"{chr(col)}5"].border = Border(top=Side(style="thick", color="FF" + accent))
-        put(f"{first}5", label, 9, True, muted)
-        ws.merge_cells(f"{first}6:{last}7")
-        put(f"{first}6", value, 24, True, ink, fmt=fmt)
-        put(f"{first}8", sub, 9, False, muted)
-    ws.row_dimensions[6].height = 22
-    ws.row_dimensions[7].height = 22
+    rate = t["received"] / t["due"] if t["due"] else 0
+    kpis, insights = key_points(report)
+    todo = [o for s in ("Trả thiếu", "Chưa trả", "Cần kiểm tra") for o in report["orders"] if o["status"] == s]
+    last_row = 70 + len(todo) + len(report["status"])
+    block("A", "Q", 1, last_row, PAGE)
 
-    # Bảng trạng thái + biểu đồ
-    r0 = 10
-    put(f"B{r0}", "THEO TRẠNG THÁI", 11, True)
-    headers = ("Trạng thái", "Số đơn", "Giá trị đơn", "Đã nhận", "Còn thiếu")
-    for i, h in enumerate(headers):
-        c = put(f"{'BCDFG'[i]}{r0 + 1}", h, 9, True, muted, "left" if i == 0 else "right")
-        c.border = Border(bottom=Side(style="thin", color="FF" + line))
-    for i, s in enumerate(report["status"], start=r0 + 2):
-        put(f"B{i}", s["name"], 10, True).fill = fill(STATUS_TINT[s["name"]])
-        put(f"C{i}", s["count"], 10, False, ink, "right")
-        put(f"D{i}", s["due"], 10, False, ink, "right", "#,##0")
-        put(f"F{i}", s["received"], 10, False, ink, "right", "#,##0")
-        put(f"G{i}", s["missing"], 10, False, ink, "right", "#,##0")
-    chart = BarChart()
-    chart.type = "bar"
-    chart.style = 2
-    chart.title = "Giá trị đơn theo trạng thái"
-    chart.legend = None
-    chart.y_axis.numFmt = "#,##0"
-    chart.y_axis.majorGridlines = None
-    data = Reference(ws, min_col=4, min_row=r0 + 1, max_row=r0 + 5)
-    chart.add_data(data, titles_from_data=True)
-    chart.set_categories(Reference(ws, min_col=2, min_row=r0 + 2, max_row=r0 + 5))
-    series = chart.series[0]
-    for idx, s in enumerate(report["status"]):
-        point = DataPoint(idx=idx)
-        point.graphicalProperties.solidFill = STATUS_HEX[s["name"]]
-        point.graphicalProperties.line.noFill = True
-        series.dPt.append(point)
-    chart.gapWidth = 60
-    chart.height, chart.width = 6.2, 12.5
-    ws.add_chart(chart, f"I{r0}")
+    # Thanh trên cùng: logo · menu viên thuốc · báo cáo
+    ws.row_dimensions[2].height = 30
+    put("B2", "▤  Đối soát", 15, True)
+    for col, label, active in (("F", "Tổng quan", True), ("G", "Việc cần làm", False), ("H", "Đơn hàng", False), ("J", "Hóa đơn", False)):
+        put(f"{col}2", label, 9.5, active, LIME_INK if active else INK2, "center", bg=LIME if active else CARD)
+    ws.merge_cells("N2:P2")
+    put("N2", f"Báo cáo cuối ngày · {report['date']}", 9.5, True, INK, "center", bg=CARD)
 
-    # Tiền về theo giờ
-    r1 = r0 + 8
-    put(f"B{r1}", "TIỀN VỀ THEO GIỜ", 11, True)
-    put(f"B{r1 + 1}", "Giờ", 9, True, muted).border = Border(bottom=Side(style="thin", color="FF" + line))
-    put(f"C{r1 + 1}", "Số tiền", 9, True, muted, "right").border = Border(bottom=Side(style="thin", color="FF" + line))
-    put(f"D{r1 + 1}", "Giao dịch", 9, True, muted, "right").border = Border(bottom=Side(style="thin", color="FF" + line))
+    # Lời chào
+    ws.row_dimensions[4].height = 28
+    put("B4", "Đối soát cuối ngày 👋", 18, True)
+    put("B5", f"{len(report['orders'])} đơn · {report['proofs']['total']} ảnh chuyển khoản · {report['date']} · "
+              "Hôm nay thu được bao nhiêu, còn ai chưa trả, đơn nào giao được.", 9.5, False, INK2)
+
+    # Bốn thẻ số chính
+    for (first, last), k in zip(CARD_COLS, kpis):
+        block(first, last, 7, 11)
+        put(f"{first}7", k["label"], 10, False, INK2)
+        put(f"{last}7", k["icon"], 11, False, INK, "right")
+        ws.merge_cells(f"{first}8:{last}9")
+        v = put(f"{first}8", k["value"], 22, True)
+        if k["fmt"] == "money":
+            money_fmt(v)
+        put(f"{first}10", k["foot"], 9, True, k["tone"])
+        put(f"{last}11", "Xem chi tiết ↗", 8.5, False, MUTED, "right")
+    for r, h in ((7, 22), (8, 20), (9, 20), (10, 18), (11, 16)):
+        ws.row_dimensions[r].height = h
+
+    # Ghi chú
+    ws.merge_cells("B13:P13")
+    put("B13", "⚠  Số tiền lấy từ ảnh khách gửi, chưa phải xác nhận tiền đã vào tài khoản. Xem sao kê trước khi giao đơn lớn. "
+               "Agent không tự gửi tin nhắn.", 9, False, INK2, bg=CARD)
+    ws.row_dimensions[13].height = 22
+
+    # Dữ liệu biểu đồ để ở trang ẩn
+    data = wb.create_sheet("_bieu_do")
+    data.sheet_state = "hidden"
     hours = report["hourly"]
-    for i, h in enumerate(hours, start=r1 + 2):
-        put(f"B{i}", f"{h['hour']:02d}:00")
-        put(f"C{i}", h["amount"], 10, False, ink, "right", "#,##0")
-        put(f"D{i}", h["count"], 10, False, ink, "right")
-    if hours:
-        col_chart = BarChart()
-        col_chart.type = "col"
-        col_chart.style = 2
-        col_chart.title = "Tiền về theo giờ (theo ảnh đã ghép)"
-        col_chart.legend = None
-        col_chart.y_axis.numFmt = "#,##0"
-        col_chart.add_data(Reference(ws, min_col=3, min_row=r1 + 1, max_row=r1 + 1 + len(hours)), titles_from_data=True)
-        col_chart.set_categories(Reference(ws, min_col=2, min_row=r1 + 2, max_row=r1 + 1 + len(hours)))
-        col_chart.series[0].graphicalProperties.solidFill = "2A78D6"
-        col_chart.series[0].graphicalProperties.line.noFill = True
-        col_chart.gapWidth = 80
-        col_chart.height, col_chart.width = 6.2, 12.5
-        ws.add_chart(col_chart, f"F{r1}")
+    lo = min([8] + [h["hour"] for h in hours]) if hours else 8
+    hi = max([18] + [h["hour"] for h in hours]) if hours else 18
+    by_hour = {h["hour"]: h for h in hours}
+    peak = max(hours, key=lambda h: h["amount"])["hour"] if hours else None
+    data.append(["Giờ", "Tiền về", "Cộng dồn"])
+    acc = 0
+    for h in range(lo, hi + 1):
+        acc += by_hour.get(h, {}).get("amount", 0)
+        data.append([f"{h}h", by_hour.get(h, {}).get("amount", 0), acc])
+    data.append([])
+    status_row = data.max_row + 1
+    data.append(["Trạng thái", "Giá trị đơn"])
+    for s in report["status"]:
+        data.append([s["name"], s["due"]])
 
-    # Việc cần làm
-    r2 = max(r1 + 3 + len(hours), r1 + 14)
-    put(f"B{r2}", "VIỆC CẦN LÀM", 11, True)
-    todo_headers = ("Trạng thái", "Mã đơn", "Khách hàng", "SĐT", "Còn thiếu", "Việc cần làm")
-    for col, h in zip("BCDFGH", todo_headers):
-        put(f"{col}{r2 + 1}", h, 9, True, muted, "right" if h == "Còn thiếu" else "left").border = Border(
-            bottom=Side(style="thin", color="FF" + line))
-    row = r2 + 2
-    for status in ("Trả thiếu", "Chưa trả", "Cần kiểm tra"):
-        for o in (o for o in report["orders"] if o["status"] == status):
-            put(f"B{row}", status, 10, True).fill = fill(STATUS_TINT[status])
-            put(f"C{row}", o["code"])
-            put(f"D{row}", o["customer"])
-            put(f"F{row}", o["phone"])
-            put(f"G{row}", o["missing"], 10, False, ink, "right", "#,##0")
-            put(f"H{row}", o["action"], 10, False, muted)
-            row += 1
-    if row == r2 + 2:
-        put(f"B{row}", "Không có việc tồn. Mọi đơn đã đủ theo ảnh.", 10, False, muted)
+    # Thẻ "Tổng quan thu tiền": số lớn + biểu đồ cột gạch chéo, giờ cao điểm màu cam
+    block("B", "L", 15, 33)
+    put("B15", "Tổng quan thu tiền", 11, True)
+    put("L15", "···", 11, True, INK2, "right")
+    ws.merge_cells("B16:D17")
+    v = put("B16", t["received"], 22, True)
+    money_fmt(v)
+    put("E16", f"{rate:.0%} ↗", 9, True, LIME_INK, "center", bg=LIME)
+    put("H16", "Phải thu", 8.5, False, MUTED)
+    put("H17", _vnd(t["due"]), 10.5, True)
+    put("K16", "Còn phải thu", 8.5, False, MUTED)
+    put("K17", _vnd(t["outstanding"]), 10.5, True)
+    put("B18", "▨ Tiền về theo giờ    ● Giờ tiền về nhiều nhất", 8.5, False, INK2)
+    if hours:
+        bars = BarChart()
+        bars.type, bars.style, bars.legend, bars.gapWidth = "col", 2, None, 45
+        bars.y_axis.numFmt = '#,##0'
+        bars.y_axis.majorGridlines.spPr = None
+        bars.add_data(Reference(data, min_col=2, min_row=1, max_row=hi - lo + 2), titles_from_data=True)
+        bars.set_categories(Reference(data, min_col=1, min_row=2, max_row=hi - lo + 2))
+        series = bars.series[0]
+        series.graphicalProperties.pattFill = PatternFillProperties(
+            prst="wdUpDiag", fgClr=ColorChoice(srgbClr="D9DCE2"), bgClr=ColorChoice(srgbClr="F1F2F5"))
+        series.graphicalProperties.line.solidFill = "E1E3E8"
+        if peak is not None:
+            point = DataPoint(idx=peak - lo)
+            point.graphicalProperties.solidFill = ORANGE
+            point.graphicalProperties.line.solidFill = ORANGE
+            series.dPt.append(point)
+        bars.height, bars.width = 7.2, 21.5
+        ws.add_chart(bars, "B19")
+
+    # Thẻ "Ý chính hôm nay": mỗi ý một ô nền nhạt
+    block("N", "P", 15, 33)
+    put("N15", "Ý chính hôm nay", 11, True)
+    put("P15", "···", 11, True, INK2, "right")
+    put("N16", "Những điều cần biết trước khi chốt ngày", 8.5, False, MUTED)
+    row = 18
+    for item in insights[:4]:
+        block("N", "P", row, row + 2, SOFT)
+        ws.merge_cells(f"N{row}:P{row}")
+        put(f"N{row}", "● " + item["title"], 11, True, item["tone"], bg=SOFT)
+        ws.merge_cells(f"N{row + 1}:P{row + 2}")
+        put(f"N{row + 1}", item["text"], 8.5, False, INK2, wrap=True, bg=SOFT).alignment = Alignment(wrap_text=True, vertical="top")
+        row += 4
+
+    # Thẻ "Giao dịch trong ngày" (đường tím cộng dồn) + "Giá trị đơn theo trạng thái"
+    block("B", "H", 35, 50)
+    put("B35", "Giao dịch trong ngày", 11, True)
+    put("H35", "···", 11, True, INK2, "right")
+    tx = sum(h["count"] for h in hours)
+    ws.row_dimensions[36].height = 30
+    put("B36", f"{tx} giao dịch", 20, True)
+    if peak is not None:
+        put("E36", f"Cao điểm {peak}h", 9, True, LIME_INK, "center", bg=LIME)
+    if hours:
+        line = LineChart()
+        line.style, line.legend = 2, None
+        line.y_axis.numFmt = '#,##0'
+        line.add_data(Reference(data, min_col=3, min_row=1, max_row=hi - lo + 2), titles_from_data=True)
+        line.set_categories(Reference(data, min_col=1, min_row=2, max_row=hi - lo + 2))
+        s = line.series[0]
+        s.smooth = True
+        s.graphicalProperties.line.solidFill = PURPLE
+        s.graphicalProperties.line.width = 32000
+        line.height, line.width = 5.6, 13.6
+        ws.add_chart(line, "B38")
+
+    block("J", "P", 35, 50)
+    put("J35", "Giá trị đơn theo trạng thái", 11, True)
+    put("P35", "···", 11, True, INK2, "right")
+    for i, st in enumerate(report["status"], start=37):
+        put(f"J{i}", "● " + st["name"], 10, True, STATUS_HEX[st["name"]])
+        put(f"N{i}", st["count"], 9, False, MUTED, "right").number_format = '0" đơn"'
+        put(f"P{i}", st["due"], 10, True, INK, "right").number_format = '#,##0"đ"'
+    status_chart = BarChart()
+    status_chart.type, status_chart.style, status_chart.legend, status_chart.gapWidth = "bar", 2, None, 55
+    status_chart.y_axis.numFmt = '#,##0'
+    status_chart.add_data(Reference(data, min_col=2, min_row=status_row, max_row=status_row + 4), titles_from_data=True)
+    status_chart.set_categories(Reference(data, min_col=1, min_row=status_row + 1, max_row=status_row + 4))
+    for idx, st in enumerate(report["status"]):
+        point = DataPoint(idx=idx)
+        point.graphicalProperties.solidFill = STATUS_HEX[st["name"]]
+        point.graphicalProperties.line.noFill = True
+        status_chart.series[0].dPt.append(point)
+    status_chart.height, status_chart.width = 4.2, 13.6
+    ws.add_chart(status_chart, "J42")
+
+    # Thẻ "Việc cần làm hôm nay"
+    r = 52
+    block("B", "P", r, r + 3 + max(len(todo), 1))
+    put(f"B{r}", "Việc cần làm hôm nay", 11, True)
+    put(f"P{r}", "···", 11, True, INK2, "right")
+    put(f"B{r + 1}", "Nhắc tiền còn thiếu trước, rồi đơn chưa thấy ảnh, rồi đơn cần mở ảnh", 8.5, False, MUTED)
+    for col, h in zip("BCDGHN", ("Trạng thái", "Khách hàng", "", "Mã đơn · SĐT", "Việc cần làm", "Còn thiếu")):
+        put(f"{col}{r + 2}", h, 8.5, False, MUTED, "right" if h == "Còn thiếu" else "left")
+    row = r + 3
+    for i, o in enumerate(todo):
+        shade = SOFT if i % 2 == 0 else CARD
+        block("B", "P", row, row, shade)
+        put(f"B{row}", o["status"], 9, True, STATUS_HEX[o["status"]], bg=STATUS_TINT[o["status"]])
+        put(f"C{row}", o["customer"], 10, True, bg=shade)
+        put(f"G{row}", f"{o['code']} · {o['phone'] or ''}", 9, False, MUTED, bg=shade)
+        put(f"H{row}", o["action"], 9, False, INK2, bg=shade)
+        v = put(f"P{row}", o["missing"] or 0, 10, True, INK, "right", bg=shade)
+        money_fmt(v)
+        ws.row_dimensions[row].height = 22
         row += 1
+    if not todo:
+        put(f"B{row}", "Không có việc tồn. Mọi đơn đã đủ theo ảnh.", 10, False, MUTED)
 
     p = report["proofs"]
-    put(f"B{row + 1}", (f"Ảnh: {p['total']} · ghép tự động {p['kinds']['Đã ghép']} ({p['auto_rate']:.0%}) · "
-                        f"trùng {p['kinds']['Trùng']} · cần xem {p['total'] - p['kinds']['Đã ghép'] - p['kinds']['Trùng']}"), 9, False, muted)
-    note_row = row + 2
-    if report.get("invoices"):
-        kinds = Counter(i["kind"] for i in report["invoices"])
-        put(f"B{note_row}", (f"Hóa đơn điện tử: {len(report['invoices'])} số · khớp {kinds['Khớp']} · lệch {kinds['Lệch']} · "
-                             f"tải trùng {kinds['Trùng']} · chỉ có ở một bên {kinds['Một bên']}"), 9, False, muted)
-        note_row += 1
-    put(f"B{note_row}", ("Số tiền lấy từ ảnh khách gửi, chưa phải xác nhận tiền đã vào tài khoản. "
-                         "Xem sao kê trước khi giao đơn lớn. Agent không gửi tin nhắn."), 9, False, muted)
-    ws.sheet_properties.tabColor = "2A78D6"
+    put(f"B{row + 2}", (f"Ảnh: {p['total']} · ghép tự động {p['kinds']['Đã ghép']} ({p['auto_rate']:.0%}) · "
+                        f"trùng {p['kinds']['Trùng']} · tạo lúc {report['generated']}"), 8.5, False, MUTED)
+
+    ws.sheet_properties.tabColor = LIME
     ws.page_setup.orientation = "landscape"
     ws.page_setup.fitToWidth = 1
     ws.page_setup.fitToHeight = 0
     ws.sheet_properties.pageSetUpPr.fitToPage = True
+    ws.print_area = f"A1:Q{row + 3}"
 
 
 # ---------------- HTML ----------------
